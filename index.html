@@ -57,12 +57,9 @@
           <span id="liveTimeText" class="text-sm font-bold font-mono tracking-wider text-white">00:00:00</span>
         </div>
 
-        <button id="btnToggleMode" onclick="handleModeSwitchClick()" class="px-3.5 py-2.5 rounded-xl bg-white text-blue-900 hover:bg-sky-50 font-bold text-xs sm:text-sm shadow-sm flex items-center gap-2 transition">
-          <svg class="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <span id="btnToggleModeLabel">Panel Guru</span>
+        <!-- Tombol kembali ke mode siswa hanya muncul ketika berada di Panel Guru -->
+        <button id="btnExitTeacherMode" onclick="switchToStudentView()" class="hidden px-3.5 py-2.5 rounded-xl bg-white text-blue-900 hover:bg-sky-50 font-bold text-xs sm:text-sm shadow-sm items-center gap-2 transition">
+          <span>← Mode Siswa</span>
         </button>
       </div>
     </div>
@@ -82,8 +79,19 @@
       <h3 id="modalTitle" class="text-lg font-extrabold text-slate-900">Konfirmasi</h3>
       <p id="modalBody" class="text-sm text-slate-600 mt-2 leading-relaxed">Apakah Anda yakin?</p>
       <div id="modalInputWrap" class="mt-4 hidden">
-        <input id="modalInput" type="password" placeholder="Masukkan kata sandi..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm" />
-        <p class="text-xs text-slate-500 mt-1.5">Petunjuk: kata sandi default guru adalah <strong>admin17</strong></p>
+        <label for="modalInput" class="block text-xs font-bold uppercase tracking-wide text-slate-600 mb-1.5">Kata Sandi Panel Guru</label>
+        <div class="relative flex items-center">
+          <input id="modalInput" type="password" autocomplete="off" placeholder="Masukkan kata sandi..." class="w-full pr-11 px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm" />
+          <button id="btnTogglePasswordVis" type="button" onclick="toggleModalPasswordVisibility()" aria-label="Tampilkan atau sembunyikan kata sandi" class="absolute right-2.5 p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition">
+            <svg id="eyeIconShow" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <svg id="eyeIconHide" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="mt-6 flex items-center justify-end gap-2.5">
         <button id="modalCancelBtn" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition">
@@ -402,7 +410,7 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Rekap Hasil Ujian &amp; Koreksi Manual Isian</h3>
-            <p class="text-xs sm:text-sm text-slate-600">Klik <strong>Nilai Isian</strong> pada setiap siswa untuk meninjau 5 jawaban isian dan menginput poin manual (0–25).</p>
+            <p class="text-xs sm:text-sm text-slate-600">Klik <strong>Simpan Nilai</strong> pada setiap siswa setelah meninjau 5 jawaban isian dan menginput poin manual (0–25).</p>
           </div>
           <div class="flex flex-wrap gap-2">
             <button onclick="exportSubmissionsCSV()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition">
@@ -471,8 +479,11 @@
     </section>
   </main>
 
+  <!-- Teks footer menjadi pemicu akses tersembunyi Panel Guru (5 kali klik) -->
   <footer class="bg-white border-t border-slate-200 py-4 px-4 text-center text-xs text-slate-500 mt-10">
-    &copy; 2026 <strong>Sekolah Dasar Negeri 17 Woja</strong> • Sistem CBT Ujian Akhir Semester Ganjil Kelas VI Kurikulum Merdeka
+    <span id="footerSecretTrigger" title="Sistem Informasi Ujian Sekolah" class="cursor-default select-none hover:text-slate-700 transition">
+      &copy; 2026 <strong>Sekolah Dasar Negeri 17 Woja</strong> • Sistem CBT Ujian Akhir Semester Ganjil Kelas VI Kurikulum Merdeka
+    </span>
   </footer>
 
   <!-- ==================== SCRIPT UTAMA APLIKASI CBT ==================== -->
@@ -770,25 +781,32 @@
       SIMULATION: 'sdn17woja_cbt_sim_mode_v1'
     };
 
-    const TEACHER_PASSCODE = 'admin17';
-    let isTeacherAuthenticated = false;
-    let currentView = 'studentHome'; // 'studentHome' | 'examRoom' | 'examResult' | 'teacherPanel'
-    let simulationMode = localStorage.getItem(STORAGE_KEYS.SIMULATION) === 'true';
+    // Kata sandi langsung Panel Guru sesuai permintaan
+    const TEACHER_PASSWORD = 'admin17';
 
-    // Default jadwal ujian per mapel
-    function buildDefaultSchedules() {
+    function getDefaultSchedules() {
       const now = new Date();
-      const schedules = {};
-      SUBJECT_BANK.forEach((subj, idx) => {
-        const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() + idx, 7, 30, 0);
-        const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + idx, 10, 30, 0);
-        schedules[subj.id] = {
-          start: toLocalDatetimeInputValue(start),
-          end: toLocalDatetimeInputValue(end),
-          durationMinutes: 60
+      const base = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7, 30, 0);
+      const makeSlot = (dayOffset, startHour, startMin, durationMin) => {
+        const s = new Date(base);
+        s.setDate(s.getDate() + dayOffset);
+        s.setHours(startHour, startMin, 0, 0);
+        const e = new Date(s.getTime() + durationMin * 60000);
+        return {
+          start: toLocalDatetimeInputValue(s),
+          end: toLocalDatetimeInputValue(e),
+          durationMinutes: durationMin
         };
-      });
-      return schedules;
+      };
+
+      return {
+        pancasila: makeSlot(0, 7, 30, 60),
+        bindo: makeSlot(0, 9, 30, 60),
+        matematika: makeSlot(1, 7, 30, 75),
+        ipas: makeSlot(1, 9, 30, 75),
+        seni: makeSlot(2, 7, 30, 60),
+        inggris: makeSlot(2, 9, 30, 60)
+      };
     }
 
     function toLocalDatetimeInputValue(dateObj) {
@@ -799,20 +817,20 @@
     let subjectSchedules = (() => {
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.SCHEDULES));
-        return saved || buildDefaultSchedules();
+        return saved ? { ...getDefaultSchedules(), ...saved } : getDefaultSchedules();
       } catch {
-        return buildDefaultSchedules();
+        return getDefaultSchedules();
       }
     })();
 
     let appSettings = (() => {
       try {
         return JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {
-          whatsappNumber: '6281234567890',
+          whatsappNumber: '',
           googleSheetUrl: ''
         };
       } catch {
-        return { whatsappNumber: '6281234567890', googleSheetUrl: '' };
+        return { whatsappNumber: '', googleSheetUrl: '' };
       }
     })();
 
@@ -824,24 +842,38 @@
       }
     })();
 
-    // State sesi ujian yang sedang berlangsung
+    let simulationMode = localStorage.getItem(STORAGE_KEYS.SIMULATION) === 'true';
+    let isTeacherAuthenticated = false;
+    let currentView = 'studentHome'; // 'studentHome' | 'examRoom' | 'examResult' | 'teacherPanel'
     let activeExamSession = null;
     let examTimerInterval = null;
     let lastCompletedResult = null;
+    let secretTapCount = 0;
+    let secretTapTimer = null;
 
     // =========================================================================
-    // 3. UTILITAS UI: TOAST & MODAL KUSTOM
+    // 3. TOAST & MODAL DIALOG KUSTOM + AUTENTIKASI SEDERHANA ('admin17')
     // =========================================================================
-    let toastTimeout = null;
     function showToast(message, icon = 'ℹ️') {
       const banner = document.getElementById('toastBanner');
-      document.getElementById('toastMessage').textContent = message;
       document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastMessage').textContent = message;
       banner.classList.remove('hidden');
-      clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => {
         banner.classList.add('hidden');
-      }, 3800);
+      }, 3600);
+    }
+
+    function toggleModalPasswordVisibility() {
+      const inputEl = document.getElementById('modalInput');
+      const eyeShow = document.getElementById('eyeIconShow');
+      const eyeHide = document.getElementById('eyeIconHide');
+      if (!inputEl) return;
+      const isPassword = inputEl.type === 'password';
+      inputEl.type = isPassword ? 'text' : 'password';
+      eyeShow.classList.toggle('hidden', isPassword);
+      eyeHide.classList.toggle('hidden', !isPassword);
     }
 
     function openConfirmModal({ title, body, showInput = false, confirmText = 'Lanjutkan', onConfirm }) {
@@ -850,9 +882,15 @@
       document.getElementById('modalBody').textContent = body;
       const inputWrap = document.getElementById('modalInputWrap');
       const inputEl = document.getElementById('modalInput');
+      const eyeShow = document.getElementById('eyeIconShow');
+      const eyeHide = document.getElementById('eyeIconHide');
+
       if (showInput) {
         inputWrap.classList.remove('hidden');
         inputEl.value = '';
+        inputEl.type = 'password';
+        if (eyeShow) eyeShow.classList.remove('hidden');
+        if (eyeHide) eyeHide.classList.add('hidden');
         setTimeout(() => inputEl.focus(), 80);
       } else {
         inputWrap.classList.add('hidden');
@@ -880,6 +918,32 @@
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+    }
+
+    function triggerHiddenTeacherAccess() {
+      if (currentView === 'examRoom') {
+        showToast('Selesaikan ujian terlebih dahulu sebelum membuka Panel Guru.', '⚠️');
+        return;
+      }
+      if (isTeacherAuthenticated) {
+        openTeacherPanel();
+        return;
+      }
+      openConfirmModal({
+        title: 'Akses Panel Guru',
+        body: 'Masukkan kata sandi guru/admin untuk mengatur jadwal ujian, integrasi WA & Google Sheets, serta menilai soal isian.',
+        showInput: true,
+        confirmText: 'Masuk Panel Guru',
+        onConfirm: (pwd) => {
+          if (pwd === TEACHER_PASSWORD) {
+            isTeacherAuthenticated = true;
+            openTeacherPanel();
+            showToast('Selamat datang di Panel Guru SDN 17 Woja.', '🔓');
+          } else {
+            showToast('Kata sandi salah! Silakan coba kembali.', '❌');
+          }
+        }
+      });
     }
 
     // =========================================================================
@@ -1050,7 +1114,6 @@
     }
 
     function buildRandomizedExamQuestions(subject) {
-      // 1. Acak urutan 30 soal PG / Benar-Salah beserta opsi pilihan gandanya
       const shuffledPg = shuffleArray(subject.pgQuestions).map((item, index) => {
         const isTrueFalse = item.options.length === 2 && item.options[0] === 'Benar';
         if (isTrueFalse) {
@@ -1064,7 +1127,6 @@
             doubt: false
           };
         }
-        // Acak opsi A, B, C, D sambil melacak jawaban yang benar
         const indexedOptions = item.options.map((optText, optIdx) => ({
           text: optText,
           isCorrect: optIdx === item.answer
@@ -1083,7 +1145,6 @@
         };
       });
 
-      // 2. Acak urutan 5 soal Isian Singkat di bagian akhir (nomor 31-35)
       const shuffledEssay = shuffleArray(subject.essayQuestions).map((item, idx) => ({
         number: 31 + idx,
         type: 'ESSAY',
@@ -1230,7 +1291,6 @@
         `;
       }
 
-      // Tombol sebelumnya / selanjutnya
       document.getElementById('btnPrevQuestion').disabled = currentIndex === 0;
       const nextBtn = document.getElementById('btnNextQuestion');
       if (currentIndex === questions.length - 1) {
@@ -1243,7 +1303,6 @@
         nextBtn.onclick = () => navigateQuestion(1);
       }
 
-      // Hitung soal terjawab & render grid navigasi
       const answeredCount = questions.filter((q) =>
         q.type === 'ESSAY' ? (q.userAnswer && q.userAnswer.trim().length > 0) : q.userAnswer !== null
       ).length;
@@ -1350,7 +1409,6 @@
         }
       });
 
-      // Bobot: 30 soal PG/BS × 2,5 poin = maksimal 75 poin; 5 soal isian = maksimal 25 poin (ditinjau guru)
       const pgScore = Number((pgCorrect * 2.5).toFixed(1));
       const nowStr = new Date().toLocaleString('id-ID', {
         day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
@@ -1368,7 +1426,7 @@
         pgCorrect,
         pgTotal: 30,
         pgScore,
-        essayScore: null, // Diisi guru secara manual
+        essayScore: null,
         totalScore: pgScore,
         status: 'Menunggu Peninjauan Isian Guru',
         essayAnswers
@@ -1516,38 +1574,16 @@
       };
       document.getElementById(map[viewName]).classList.remove('hidden');
 
-      const modeBtnLabel = document.getElementById('btnToggleModeLabel');
-      modeBtnLabel.textContent = viewName === 'teacherPanel' ? 'Mode Siswa' : 'Panel Guru';
-    }
-
-    function handleModeSwitchClick() {
-      if (currentView === 'examRoom') {
-        showToast('Selesaikan ujian terlebih dahulu sebelum berpindah mode.', '⚠️');
-        return;
-      }
-      if (currentView === 'teacherPanel') {
-        switchToStudentView();
-        return;
-      }
-      if (isTeacherAuthenticated) {
-        openTeacherPanel();
-        return;
-      }
-      openConfirmModal({
-        title: 'Masuk ke Panel Guru / Admin',
-        body: 'Masukkan kata sandi guru untuk mengatur jadwal ujian, integrasi Google Sheets/WA, dan penilaian manual soal isian.',
-        showInput: true,
-        confirmText: 'Masuk Panel Guru',
-        onConfirm: (pwd) => {
-          if (pwd === TEACHER_PASSCODE) {
-            isTeacherAuthenticated = true;
-            openTeacherPanel();
-            showToast('Berhasil masuk ke Panel Guru SDN 17 Woja.', '🔓');
-          } else {
-            showToast('Kata sandi salah! Gunakan "admin17".', '❌');
-          }
+      const exitTeacherBtn = document.getElementById('btnExitTeacherMode');
+      if (exitTeacherBtn) {
+        if (viewName === 'teacherPanel') {
+          exitTeacherBtn.classList.remove('hidden');
+          exitTeacherBtn.classList.add('flex');
+        } else {
+          exitTeacherBtn.classList.add('hidden');
+          exitTeacherBtn.classList.remove('flex');
         }
-      });
+      }
     }
 
     function switchToStudentView() {
@@ -1748,7 +1784,6 @@
               </div>
             </div>
 
-            <!-- Rincian 5 Jawaban Isian & Acuan Kunci Guru -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
               ${sub.essayAnswers.map((ans, aIdx) => `
                 <div class="p-3 rounded-xl bg-white border border-slate-200 text-xs space-y-1">
@@ -1759,7 +1794,6 @@
               `).join('')}
             </div>
 
-            <!-- Input Skor Manual Isian oleh Guru -->
             <div class="pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
               <div class="flex items-center gap-2">
                 <label class="text-xs font-bold text-slate-700">Input Skor Total 5 Isian (0–25):</label>
@@ -1874,6 +1908,31 @@
     // 12. INISIALISASI SAAT HALAMAN DIMUAT
     // =========================================================================
     window.onload = function () {
+      // Akses Panel Guru tersembunyi #1: 5 kali klik pada teks footer nama sekolah dalam 2,5 detik
+      const footerTrigger = document.getElementById('footerSecretTrigger');
+      if (footerTrigger) {
+        footerTrigger.addEventListener('click', () => {
+          secretTapCount += 1;
+          clearTimeout(secretTapTimer);
+          if (secretTapCount >= 5) {
+            secretTapCount = 0;
+            triggerHiddenTeacherAccess();
+          } else {
+            secretTapTimer = setTimeout(() => {
+              secretTapCount = 0;
+            }, 2500);
+          }
+        });
+      }
+
+      // Akses Panel Guru tersembunyi #2: Shortcut keyboard Ctrl + Shift + G
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key && e.key.toLowerCase() === 'g') {
+          e.preventDefault();
+          triggerHiddenTeacherAccess();
+        }
+      });
+
       updateClockAndCards();
       setInterval(updateClockAndCards, 1000);
     };

@@ -411,16 +411,38 @@
       <div id="teacherTabGrading" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-5">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Rekap Hasil Ujian &amp; Koreksi Manual Isian</h3>
-            <p class="text-xs sm:text-sm text-slate-600">Klik <strong>Simpan Nilai</strong> pada setiap siswa setelah meninjau 5 jawaban isian dan menginput poin manual (0–25).</p>
+            <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Rekap Hasil Ujian &amp; Koreksi Manual Isian (Tersinkron)</h3>
+            <p class="text-xs sm:text-sm text-slate-600">Tarik rekap seluruh siswa dari Google Sheets, koreksi 5 jawaban isian (0–25), lalu sinkronkan nilai kembali ke Google Sheets &amp; perangkat lokal.</p>
           </div>
           <div class="flex flex-wrap gap-2">
+            <button id="btnSyncRekapCloud" onclick="syncSubmissionsWithGoogleSheet(true)" class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-xs transition">
+              🔄 Sinkronkan Rekap &amp; Koreksi
+            </button>
             <button onclick="exportSubmissionsCSV()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition">
               Unduh Rekap CSV / Excel
             </button>
             <button onclick="confirmClearSubmissions()" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs transition">
               Hapus Riwayat Lokal
             </button>
+          </div>
+        </div>
+
+        <div id="gradingSyncBanner" class="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-950 flex flex-wrap items-center justify-between gap-2">
+          <span id="gradingSyncStatusText">Rekap lokal siap digunakan. Klik <strong>Sinkronkan Rekap &amp; Koreksi</strong> untuk memuat data terbaru semua siswa dari Google Sheets.</span>
+          <div class="flex items-center gap-2">
+            <label for="filterGradingSubject" class="font-bold text-slate-700">Filter Mapel:</label>
+            <select id="filterGradingSubject" onchange="renderSubmissionsList()" class="px-2.5 py-1 rounded-lg border border-slate-300 bg-white text-xs font-semibold">
+              <option value="ALL">Semua Mata Pelajaran</option>
+              <option value="pancasila">Pendidikan Pancasila</option>
+              <option value="bindo">Bahasa Indonesia</option>
+              <option value="matematika">Matematika</option>
+              <option value="ipas">IPAS</option>
+              <option value="seni">Seni Budaya</option>
+              <option value="inggris">Bahasa Inggris</option>
+              <option value="pai">PAI &amp; Budi Pekerti</option>
+              <option value="pjok">PJOK</option>
+              <option value="mulok">Muatan Lokal Dompu</option>
+            </select>
           </div>
         </div>
 
@@ -854,37 +876,37 @@
         pgQuestions: [
           { q: "Bahasa daerah yang digunakan secara turun-temurun oleh masyarakat Kabupaten Dompu dalam kehidupan sehari-hari disebut...", options: ["Nggahi Mbojo (Bahasa Dompu/Bima)", "Bahasa Sasak", "Bahasa Bugis", "Bahasa Bali"], answer: 0 },
           { q: "Dalam Nggahi Mbojo (Bahasa Dompu), kata sapaan 'Nahu' memiliki arti dalam bahasa Indonesia...", options: ["Kamu / Anda", "Saya / Aku", "Mereka", "Kita semua"], answer: 1 },
-          { q: "[Benar / Salah] Kata 'Ndaimu' atau 'Ita' dalam sapaan Bahasa Dompu dapat digunakan untuk menyapa lawan bicara dengan sopan sesuai konteks.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "[Benar / Salah] Kata 'Nggomi' atau 'Ce'e' dalam sapaan Bahasa Dompu dapat digunakan untuk menyapa lawan bicara dengan sopan sesuai konteks.", options: ["Benar", "Salah"], answer: 0 },
           { q: "Arti kata 'Mbojo' dalam ungkapan 'Dou Mbojo' merujuk pada...", options: ["Masyarakat / orang asal tanah Dompu dan Bima", "Nama alat musik tiup", "Jenis tarian perang", "Nama sungai"], answer: 0 },
           { q: "Ungkapan adat atau falsafah hidup masyarakat Dompu-Bima yang menekankan ketakwaan kepada Allah SWT serta kepatuhan pada hukum dan adat adalah...", options: ["Nggahi Rawi Pahu", "Wura Bongi Monca", "Mpa'a Lengge", "Sere"], answer: 0 },
           { q: "[Benar / Salah] 'Nggahi' bermakna kata/ucapan, 'Rawi' bermakna perbuatan, dan 'Pahu' bermakna pendirian/keputusan yang harus selaras.", options: ["Benar", "Salah"], answer: 0 },
-          { q: "Dalam Bahasa Dompu, kata 'Uma' memiliki arti...", options: ["Rumah", "Sawah", "Gunung", "Pantai"], answer: 0 },
-          { q: "Arti kata 'Oi' dalam kosakata Bahasa Dompu yang berkaitan dengan perairan adalah...", options: ["Air", "Api", "Angin", "Tanah"], answer: 0 },
+          { q: "Dalam Bahasa Dompu, kata 'Ruma' memiliki arti...", options: ["Rumah", "Sawah", "Gunung", "Pantai"], answer: 0 },
+          { q: "Arti kata 'Oi' atau 'Sa'e' dalam kosakata Bahasa Dompu yang berkaitan dengan perairan adalah...", options: ["Air", "Api", "Angin", "Tanah"], answer: 0 },
           { q: "[Benar / Salah] Dalam Bahasa Dompu, kata 'Dou' berarti orang atau manusia.", options: ["Benar", "Salah"], answer: 0 },
-          { q: "Kata 'Tunti' dalam Bahasa Dompu memiliki arti...", options: ["Menulis / mencatat", "Menyanyi", "Menari", "Memasak"], answer: 0 },
-          { q: "Kalimat sapaan ramah 'Bune Haba?' atau menanyakan kabar dalam percakapan sehari-hari mencerminkan budaya...", options: ["Kesantunan dan kekerabatan (silahturahmi) masyarakat Dompu", "Ketidakpedulian terhadap sesama", "Sikap acuh tak acuh", "Bahasa resmi kenegaraan saja"], answer: 0 },
+          { q: "Kata 'Nuntu' dalam Bahasa Dompu memiliki arti...", options: ["Menulis / mencatat", "Menyanyi", "Menari", "Memasak"], answer: 0 },
+          { q: "Kalimat sapaan ramah 'Aina dou?' atau menanyakan kabar dalam percakapan sehari-hari mencerminkan budaya...", options: ["Kesantunan dan kekerabatan (silahturahmi) masyarakat Dompu", "Ketidakpedulian terhadap sesama", "Sikap acuh tak acuh", "Bahasa resmi kenegaraan saja"], answer: 0 },
           { q: "[Benar / Salah] Menggunakan bahasa daerah yang santun kepada orang tua dan guru merupakan wujud pelestarian adab dan budaya lokal Dompu.", options: ["Benar", "Salah"], answer: 0 },
-          { q: "Dalam bilangan/angka Bahasa Dompu, kata 'Ica' atau 'Sabua' berkaitan dengan bilangan...", options: ["Satu (1)", "Lima (5)", "Sepuluh (10)", "Seratus (100)"], answer: 0 },
+          { q: "Dalam bilangan/angka Bahasa Dompu, kata 'Esa' atau 'Sabua' berkaitan dengan bilangan...", options: ["Satu (1)", "Lima (5)", "Sepuluh (10)", "Seratus (100)"], answer: 0 },
           { q: "Kata 'Dua' dalam Bahasa Dompu memiliki arti bilangan...", options: ["Dua (2)", "Tiga (3)", "Empat (4)", "Enam (6)"], answer: 0 },
           { q: "[Benar / Salah] Angka 'Tolu' dalam kosakata Bahasa Dompu berarti tiga (3).", options: ["Benar", "Salah"], answer: 0 },
           { q: "Dalam Bahasa Dompu, kata 'Mada' berarti...", options: ["Mata", "Telinga", "Hidung", "Tangan"], answer: 0 },
-          { q: "Kata 'Kaki' atau 'Edi' dalam Bahasa Dompu merujuk pada bagian tubuh...", options: ["Kaki", "Kepala", "Bahu", "Jari"], answer: 0 },
+          { q: "Kata 'Kaki' atau 'Ai' dalam Bahasa Dompu merujuk pada bagian tubuh...", options: ["Kaki", "Kepala", "Bahu", "Jari"], answer: 0 },
           { q: "[Benar / Salah] 'Lopi' dalam kosakata pesisir Dompu merujuk pada perahu.", options: ["Benar", "Salah"], answer: 0 },
-          { q: "Kata 'Ncabi' atau 'Nggahi' dalam konteks tutur kata yang baik harus dijaga agar tidak menyakiti hati orang lain. Sikap ini selaras dengan nilai...", options: ["Santun berbahasa (nggahi rawi pahu)", "Berkata kasar", "Menyebarkan kebohongan", "Berbicara tanpa etika"], answer: 0 },
+          { q: "Kata 'Nca'u' atau 'Nggahi' dalam konteks tutur kata yang baik harus dijaga agar tidak menyakiti hati orang lain. Sikap ini selaras dengan nilai...", options: ["Santun berbahasa (nggahi rawi pahu)", "Berkata kasar", "Menyebarkan kebohongan", "Berbicara tanpa etika"], answer: 0 },
           { q: "Dalam Bahasa Dompu, kata 'Bola' dalam konteks kehidupan sehari-hari atau istilah lokal memiliki makna khusus sesuai kalimat; sedangkan kata 'Ma'a' sering digunakan untuk menanyakan...", options: ["Apa / mana", "Kapan saja", "Berapa harga", "Mengapa begitu"], answer: 0 },
           { q: "[Benar / Salah] Mengenal nama-nama hari, waktu, dan benda sekitar dalam Bahasa Dompu membantu siswa melestarikan bahasa ibu.", options: ["Benar", "Salah"], answer: 0 },
           { q: "Tradisi lisan dan ungkapan bijak (pantun/syair/nasihat) dalam budaya Dompu berfungsi untuk...", options: ["Menanamkan nilai moral, budi pekerti, dan nasihat kehidupan", "Menghapus sejarah lokal", "Menggantikan pelajaran matematika", "Menghindari komunikasi antarwarga"], answer: 0 },
-          { q: "Kata 'Lao' atau 'Lampa' dalam konteks gerak/aktivitas berkaitan dengan...", options: ["Berjalan / pergi", "Tidur nyenyak", "Makan bersama", "Membaca buku"], answer: 0 },
+          { q: "Kata 'Kaboro' atau 'Lampa' dalam konteks gerak/aktivitas berkaitan dengan...", options: ["Berjalan / pergi", "Tidur nyenyak", "Makan bersama", "Membaca buku"], answer: 0 },
           { q: "[Benar / Salah] Sikap saling menghargai antarpenutur bahasa daerah memperkuat kerukunan di Kabupaten Dompu dan sekitarnya.", options: ["Benar", "Salah"], answer: 0 },
           { q: "Ketika menyapa guru atau tetangga yang lebih tua di Dompu, sikap yang paling tepat adalah...", options: ["Mengucapkan salam/sapaan dengan nada lembut, wajah ramah, dan postur sopan", "Memanggil dengan teriakan dari kejauhan", "Memalingkan muka saat berpapasan", "Berbicara sambil duduk membelakangi"], answer: 0 },
-          { q: "Kata 'Bunga' dalam Bahasa Dompu merujuk pada...", options: ["Bunga", "Batu", "Pasir", "Awan"], answer: 0 },
+          { q: "Kata 'Wunga' dalam Bahasa Dompu merujuk pada...", options: ["Bunga", "Batu", "Pasir", "Awan"], answer: 0 },
           { q: "[Benar / Salah] Melatih percakapan sederhana menggunakan Bahasa Dompu di sekolah dan rumah membantu menjaga bahasa daerah agar tidak punah.", options: ["Benar", "Salah"], answer: 0 },
           { q: "Dalam budaya masyarakat Dompu, kejujuran dan menepati janji sangat dijunjung tinggi karena mencerminkan...", options: ["Keteguhan ucapan dan perbuatan (nggahi rawi pahu)", "Sikap ingkar janji", "Ketidakjujuran", "Sikap mengabaikan amanah"], answer: 0 },
-          { q: "Kata 'Ngadi Ai' atau 'Amangadi' dalam penunjuk waktu merujuk pada suasana...", options: ["Malam hari", "Pagi hari", "Siang hari", "Senja hari"], answer: 0 },
+          { q: "Kata 'Rima' atau 'Malam' dalam penunjuk waktu merujuk pada suasana...", options: ["Malam hari", "Pagi hari", "Siang hari", "Senja hari"], answer: 0 },
           { q: "[Benar / Salah] Bahasa daerah Dompu merupakan kekayaan budaya lokal yang patut dibanggakan dan dilestarikan oleh generasi muda.", options: ["Benar", "Salah"], answer: 0 }
         ],
         essayQuestions: [
-          { q: "Kata 'Uma' dalam Bahasa Daerah Dompu memiliki arti dalam bahasa Indonesia yaitu...", hint: "Rumah" },
+          { q: "Kata 'Ruma' dalam Bahasa Daerah Dompu memiliki arti dalam bahasa Indonesia yaitu...", hint: "Rumah" },
           { q: "Kata 'Dou' dalam Bahasa Daerah Dompu berarti...", hint: "Orang / manusia" },
           { q: "Falsafah hidup masyarakat Dompu yang menekankan keselarasan kata, perbuatan, dan pendirian disebut Nggahi Rawi...", hint: "Pahu" },
           { q: "Kata ganti orang pertama tunggal ('saya') dalam Bahasa Daerah Dompu adalah...", hint: "Nahu" },
@@ -1816,6 +1838,11 @@
       lastCompletedResult = submissionRecord;
       activeExamSession = null;
 
+      // Kirim otomatis ke Google Sheets jika URL tersedia
+      if ((appSettings.googleSheetUrl || '').trim()) {
+        postRecordToGoogleSheet(submissionRecord, { silent: true });
+      }
+
       renderExamResultView(submissionRecord);
       switchView('examResult');
     }
@@ -1892,41 +1919,237 @@
       await postRecordToGoogleSheet(lastCompletedResult);
     }
 
-    async function postRecordToGoogleSheet(record) {
-      const url = (appSettings.googleSheetUrl || '').trim();
-      if (!url) {
-        showToast('URL Google Apps Script belum diatur di Panel Guru.', '⚠️');
-        return;
-      }
-
-      const payload = {
+    function buildSubmissionPayload(record, action = 'upsert_submission') {
+      const essayAnswers = Array.isArray(record.essayAnswers) ? record.essayAnswers : [];
+      return {
+        action,
+        id: record.id,
         timestamp: record.timestamp,
-        school: record.school,
+        school: record.school || 'Sekolah Dasar Negeri 17 Woja',
         studentName: record.studentName,
         studentClass: record.studentClass,
         studentAbsen: record.studentAbsen,
+        subjectId: record.subjectId || normalizeSubjectId(record.subjectName),
         subjectName: record.subjectName,
         pgCorrect: record.pgCorrect,
+        pgTotal: record.pgTotal || 30,
         pgScore: record.pgScore,
-        essayScore: record.essayScore !== null ? record.essayScore : 'Belum Dinilai',
+        essayScore: record.essayScore !== null && record.essayScore !== undefined ? record.essayScore : 'Belum Dinilai',
         totalScore: record.totalScore,
-        status: record.status,
-        essaySummary: record.essayAnswers.map((e, i) => `[${i + 1}] ${e.studentAnswer}`).join(' | ')
+        status: record.status || (record.essayScore !== null && record.essayScore !== undefined ? 'Selesai Dinilai Guru' : 'Menunggu Peninjauan Isian Guru'),
+        essaySummary: essayAnswers.map((e, i) => `[${i + 1}] ${e.studentAnswer}`).join(' | '),
+        essayAnswers
       };
+    }
+
+    async function postRecordToGoogleSheet(record, options = {}) {
+      const silent = !!options.silent;
+      const url = (appSettings.googleSheetUrl || '').trim();
+      if (!url) {
+        if (!silent) showToast('URL Google Apps Script belum diatur di Panel Guru.', '⚠️');
+        return false;
+      }
+
+      const payload = buildSubmissionPayload(record, options.action || 'upsert_submission');
 
       try {
-        showToast('Mengirim data hasil ujian ke Google Sheets...', '⏳');
+        if (!silent) showToast('Menyinkronkan data hasil ujian ke Google Sheets...', '⏳');
         await fetch(url, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        showToast('Data berhasil dikirim ke Google Sheets!', '✅');
+        if (!silent) {
+          showToast('Data berhasil disinkronkan ke Google Sheets!', '✅');
+        }
         const statusEl = document.getElementById('sheetSyncStatusText');
-        if (statusEl) statusEl.textContent = '✅ Terkirim ke Google Sheets pada ' + new Date().toLocaleTimeString('id-ID');
+        if (statusEl) {
+          statusEl.textContent = '✅ Tersinkron ke Google Sheets pada ' + new Date().toLocaleTimeString('id-ID');
+        }
+        return true;
       } catch (err) {
-        showToast('Gagal terhubung ke Google Sheets. Periksa URL Web App.', '❌');
+        if (!silent) showToast('Gagal terhubung ke Google Sheets. Periksa URL Web App.', '❌');
+        return false;
+      }
+    }
+
+    function parseRemoteEssayAnswers(rawItem, subjectId) {
+      if (Array.isArray(rawItem.essayAnswers) && rawItem.essayAnswers.length > 0) {
+        return rawItem.essayAnswers.map((ans, idx) => ({
+          number: ans.number || (31 + idx),
+          question: ans.question || `Soal Isian #${idx + 1}`,
+          hint: ans.hint || '-',
+          studentAnswer: ans.studentAnswer || '(Tidak dijawab)'
+        }));
+      }
+
+      const subjObj = SUBJECT_BANK.find((s) => s.id === subjectId);
+      const bankEssays = subjObj ? subjObj.essayQuestions : [];
+      const summaryStr = String(extractRowField(rawItem, 'essaySummary') || extractRowField(rawItem, 'essay_summary') || '');
+      const parts = summaryStr
+        ? summaryStr.split(' | ').map((seg) => seg.replace(/^\[\d+\]\s*/, '').trim())
+        : [];
+
+      const count = Math.max(5, bankEssays.length, parts.length);
+      const list = [];
+      for (let i = 0; i < count; i++) {
+        const ref = bankEssays[i] || {};
+        list.push({
+          number: 31 + i,
+          question: ref.q || `Soal Isian Singkat #${i + 1}`,
+          hint: ref.hint || '-',
+          studentAnswer: parts[i] !== undefined && parts[i] !== '' ? parts[i] : '(Tidak dijawab)'
+        });
+      }
+      return list;
+    }
+
+    function normalizeRemoteSubmission(rawItem) {
+      if (!rawItem || typeof rawItem !== 'object') return null;
+      const studentName = String(extractRowField(rawItem, 'studentName') || extractRowField(rawItem, 'nama_siswa') || '').trim();
+      const subjectName = String(extractRowField(rawItem, 'subjectName') || extractRowField(rawItem, 'mata_pelajaran') || '').trim();
+      if (!studentName && !subjectName) return null;
+
+      const rawSubjId = extractRowField(rawItem, 'subjectId') || subjectName;
+      const subjectId = normalizeSubjectId(rawSubjId);
+      const matchedSubj = SUBJECT_BANK.find((s) => s.id === subjectId);
+      const finalSubjectName = subjectName || (matchedSubj ? matchedSubj.name : 'Mata Pelajaran');
+
+      const studentClass = String(extractRowField(rawItem, 'studentClass') || extractRowField(rawItem, 'kelas') || 'VI-A').trim();
+      const studentAbsen = String(extractRowField(rawItem, 'studentAbsen') || extractRowField(rawItem, 'absen') || '-').trim();
+      const timestamp = String(extractRowField(rawItem, 'timestamp') || extractRowField(rawItem, 'waktu') || '-').trim();
+      const school = String(extractRowField(rawItem, 'school') || 'Sekolah Dasar Negeri 17 Woja').trim();
+
+      const pgCorrectRaw = Number(extractRowField(rawItem, 'pgCorrect'));
+      const pgCorrect = !isNaN(pgCorrectRaw) ? pgCorrectRaw : 0;
+
+      const pgScoreRaw = Number(extractRowField(rawItem, 'pgScore'));
+      const pgScore = !isNaN(pgScoreRaw) ? Number(pgScoreRaw.toFixed(1)) : Number((pgCorrect * 2.5).toFixed(1));
+
+      const rawEssay = extractRowField(rawItem, 'essayScore');
+      const parsedEssayNum = rawEssay === '' || rawEssay === null || rawEssay === undefined || String(rawEssay).toLowerCase().includes('belum') || String(rawEssay).toLowerCase().includes('menunggu')
+        ? NaN
+        : Number(rawEssay);
+      const essayScore = !isNaN(parsedEssayNum) ? Number(parsedEssayNum.toFixed(1)) : null;
+
+      const rawTotal = Number(extractRowField(rawItem, 'totalScore'));
+      const totalScore = !isNaN(rawTotal)
+        ? Number(rawTotal.toFixed(1))
+        : Number((pgScore + (essayScore !== null ? essayScore : 0)).toFixed(1));
+
+      const rawId = String(extractRowField(rawItem, 'id') || '').trim();
+      const stableId = rawId || `SUB-${studentName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${studentClass}-${studentAbsen}-${subjectId}-${timestamp}`;
+
+      const status = essayScore !== null
+        ? 'Selesai Dinilai Guru'
+        : (String(extractRowField(rawItem, 'status') || 'Menunggu Peninjauan Isian Guru'));
+
+      return {
+        id: stableId,
+        timestamp,
+        school,
+        subjectId,
+        subjectName: finalSubjectName,
+        studentName: studentName || 'Peserta Ujian',
+        studentClass,
+        studentAbsen,
+        pgCorrect,
+        pgTotal: 30,
+        pgScore,
+        essayScore,
+        totalScore,
+        status,
+        essayAnswers: parseRemoteEssayAnswers(rawItem, subjectId)
+      };
+    }
+
+    async function syncSubmissionsWithGoogleSheet(manualTrigger = false) {
+      const url = (appSettings.googleSheetUrl || '').trim();
+      const statusBannerText = document.getElementById('gradingSyncStatusText');
+
+      if (!url) {
+        if (statusBannerText) {
+          statusBannerText.innerHTML = '⚠️ URL Web App Google Sheets belum diisi pada tab <strong>3. Pengaturan WhatsApp &amp; Google Sheets</strong>. Data saat ini hanya tersimpan di browser lokal.';
+        }
+        if (manualTrigger) {
+          showToast('Atur URL Google Apps Script terlebih dahulu di tab Pengaturan.', '⚠️');
+        }
+        return;
+      }
+
+      try {
+        if (manualTrigger) showToast('Menarik rekap & status koreksi siswa dari Google Sheets...', '🔄');
+        const sep = url.includes('?') ? '&' : '?';
+        const fetchUrl = `${url}${sep}action=get_submissions&_t=${Date.now()}`;
+        const response = await fetch(fetchUrl, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+        const remoteRows = Array.isArray(data)
+          ? data
+          : Array.isArray(data.submissions)
+            ? data.submissions
+            : Array.isArray(data.rekap)
+              ? data.rekap
+              : Array.isArray(data.data)
+                ? data.data
+                : [];
+
+        const remoteNormalized = remoteRows
+          .map(normalizeRemoteSubmission)
+          .filter(Boolean);
+
+        // Gabungkan data remote & lokal berdasarkan ID / kunci siswa+mapel+waktu
+        const mergedMap = new Map();
+        const makeKey = (item) =>
+          item.id && !item.id.startsWith('SUB-17')
+            ? item.id
+            : `${item.studentName.toLowerCase()}|${item.studentClass}|${item.studentAbsen}|${item.subjectId}|${item.timestamp}`;
+
+        // Masukkan data remote terlebih dahulu (sumber terpusat semua siswa)
+        remoteNormalized.forEach((rem) => {
+          mergedMap.set(makeKey(rem), rem);
+        });
+
+        // Sinkronkan juga item lokal yang belum ada atau yang baru saja dikoreksi di perangkat ini
+        for (const loc of allSubmissions) {
+          const key = makeKey(loc);
+          const existing = mergedMap.get(key);
+          if (!existing) {
+            mergedMap.set(key, loc);
+            // Dorong catatan lokal yang belum ada di server ke Google Sheets
+            postRecordToGoogleSheet(loc, { silent: true, action: 'upsert_submission' });
+          } else if (existing.essayScore === null && loc.essayScore !== null) {
+            mergedMap.set(key, {
+              ...existing,
+              essayScore: loc.essayScore,
+              totalScore: loc.totalScore,
+              status: 'Selesai Dinilai Guru'
+            });
+            postRecordToGoogleSheet(loc, { silent: true, action: 'update_grade' });
+          }
+        }
+
+        allSubmissions = Array.from(mergedMap.values());
+        localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(allSubmissions));
+        renderSubmissionsList();
+
+        const timeNow = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        if (statusBannerText) {
+          statusBannerText.innerHTML = `✅ Tersinkron dengan Google Sheets (${allSubmissions.length} data siswa • diperbarui pukul ${timeNow}).`;
+        }
+        if (manualTrigger) {
+          showToast(`Rekap berhasil disinkronkan (${allSubmissions.length} entri siswa).`, '✅');
+        }
+      } catch (err) {
+        console.warn('Sinkronisasi rekap ke Google Sheets gagal/belum mendukung GET rekap:', err);
+        if (statusBannerText) {
+          statusBannerText.innerHTML = '⚠️ Gagal menarik rekap otomatis dari Google Sheets. Pastikan Web App Google Apps Script mendukung parameter <code>?action=get_submissions</code>. Nilai yang Anda simpan tetap tersimpan lokal &amp; dikirim via POST.';
+        }
+        if (manualTrigger) {
+          showToast('Tidak dapat menarik rekap otomatis dari server. Menampilkan data lokal.', '⚠️');
+        }
       }
     }
 
@@ -1975,6 +2198,7 @@
       updateCentralSyncUI();
       renderScheduleTable();
       renderSubmissionsList();
+      syncSubmissionsWithGoogleSheet(false);
       document.getElementById('cfgWhatsappNumber').value = appSettings.whatsappNumber || '';
       document.getElementById('cfgGoogleSheetUrl').value = appSettings.googleSheetUrl || '';
       document.getElementById('submissionCountBadge').textContent = allSubmissions.length;
@@ -2121,16 +2345,36 @@
       const container = document.getElementById('submissionsListContainer');
       document.getElementById('submissionCountBadge').textContent = allSubmissions.length;
 
+      const filterSelect = document.getElementById('filterGradingSubject');
+      const selectedFilter = filterSelect ? filterSelect.value : 'ALL';
+
+      const filteredEntries = allSubmissions
+        .map((sub, idx) => ({ sub, idx }))
+        .filter(({ sub }) => {
+          if (!selectedFilter || selectedFilter === 'ALL') return true;
+          const sid = sub.subjectId || normalizeSubjectId(sub.subjectName);
+          return sid === selectedFilter;
+        });
+
       if (allSubmissions.length === 0) {
         container.innerHTML = `
           <div class="p-8 text-center rounded-xl bg-slate-50 border border-dashed border-slate-300 text-slate-500 text-sm">
-            Belum ada data ujian siswa yang tersimpan di perangkat ini.
+            Belum ada data ujian siswa. Klik <strong>Sinkronkan Rekap &amp; Koreksi</strong> untuk menarik data semua siswa dari Google Sheets.
           </div>
         `;
         return;
       }
 
-      container.innerHTML = allSubmissions.map((sub, idx) => {
+      if (filteredEntries.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center rounded-xl bg-slate-50 border border-dashed border-slate-300 text-slate-500 text-sm">
+            Tidak ada data ujian siswa untuk mata pelajaran yang dipilih.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filteredEntries.map(({ sub, idx }) => {
         const isGraded = sub.essayScore !== null && sub.essayScore !== undefined;
         return `
           <div class="rounded-2xl border border-slate-200 p-4 sm:p-5 bg-slate-50/60 space-y-4">
@@ -2224,7 +2468,8 @@
 
       localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(allSubmissions));
       renderSubmissionsList();
-      showToast(`Nilai akhir ${sub.studentName} diperbarui menjadi ${sub.totalScore}.`, '✅');
+      postRecordToGoogleSheet(sub, { silent: true, action: 'update_grade' });
+      showToast(`Nilai akhir ${sub.studentName} diperbarui menjadi ${sub.totalScore} dan disinkronkan.`, '✅');
     }
 
     function sendSubmissionItemToWA(idx) {

@@ -57,7 +57,6 @@
           <span id="liveTimeText" class="text-sm font-bold font-mono tracking-wider text-white">00:00:00</span>
         </div>
 
-        <!-- Tombol kembali ke mode siswa hanya muncul ketika berada di Panel Guru -->
         <button id="btnExitTeacherMode" onclick="switchToStudentView()" class="hidden px-3.5 py-2.5 rounded-xl bg-white text-blue-900 hover:bg-sky-50 font-bold text-xs sm:text-sm shadow-sm items-center gap-2 transition">
           <span>← Mode Siswa</span>
         </button>
@@ -73,7 +72,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL DIALOG KUSTOM (PENGGANTI ALERT/CONFIRM) ==================== -->
+  <!-- ==================== MODAL DIALOG KUSTOM ==================== -->
   <div id="customModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
       <h3 id="modalTitle" class="text-lg font-extrabold text-slate-900">Konfirmasi</h3>
@@ -109,7 +108,6 @@
 
     <!-- ==================== VIEW 1: BERANDA SISWA & DAFTAR MAPEL ==================== -->
     <section id="viewStudentHome" class="space-y-6">
-      <!-- Kartu Identitas Peserta -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-100">
           <div>
@@ -149,8 +147,14 @@
             <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">Pilih Paket Soal Mata Pelajaran</h2>
             <p class="text-sm text-slate-600">Setiap paket terdiri dari <strong>30 soal PG/Benar-Salah (acak)</strong> &amp; <strong>5 soal isian singkat</strong>.</p>
           </div>
-          <div class="text-xs text-slate-500 bg-white px-3 py-1.5 rounded-lg border border-slate-200">
-            Status jadwal diperbarui otomatis setiap detik
+          <div class="flex flex-wrap items-center gap-2">
+            <div id="centralSyncBadge" class="text-xs bg-white px-3 py-1.5 rounded-lg border border-slate-200 flex items-center gap-2">
+              <span id="centralSyncDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span>
+              <span id="centralSyncStatusText" class="font-semibold text-slate-700">Memuat jadwal terpusat...</span>
+            </div>
+            <button type="button" onclick="fetchCentralSchedules(true)" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 transition">
+              ↻ Segarkan Jadwal
+            </button>
           </div>
         </div>
 
@@ -162,7 +166,6 @@
 
     <!-- ==================== VIEW 2: RUANG UJIAN CBT AKTIF ==================== -->
     <section id="viewExamRoom" class="hidden space-y-5">
-      <!-- Bar Atas Ruang Ujian -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <div class="flex items-center gap-2">
@@ -191,9 +194,7 @@
         </div>
       </div>
 
-      <!-- Area Soal & Panel Nomor -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        <!-- Kartu Soal Utama -->
         <div class="lg:col-span-8 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-7 flex flex-col justify-between min-h-[420px]">
           <div>
             <div class="flex items-center justify-between gap-2 pb-4 border-b border-slate-100">
@@ -206,18 +207,15 @@
               </label>
             </div>
 
-            <!-- Teks Pertanyaan -->
             <div id="questionTextContainer" class="mt-5 text-base sm:text-lg font-medium text-slate-900 leading-relaxed">
               Memuat soal...
             </div>
 
-            <!-- Kontainer Opsi Jawaban / Input Isian -->
             <div id="answerInputContainer" class="mt-6 space-y-3">
               <!-- Dirender dinamis -->
             </div>
           </div>
 
-          <!-- Tombol Navigasi Soal -->
           <div class="mt-8 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
             <button id="btnPrevQuestion" onclick="navigateQuestion(-1)" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-800 font-bold text-sm flex items-center gap-2 transition">
               ← Sebelumnya
@@ -233,7 +231,6 @@
           </div>
         </div>
 
-        <!-- Navigasi Nomor Soal (Sidebar / Bawah di Mobile) -->
         <div class="lg:col-span-4 bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
           <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wide">Navigasi Nomor Soal</h3>
           <p class="text-xs text-slate-500 mt-0.5">No. 1–30: PG / Benar-Salah • No. 31–35: Isian</p>
@@ -267,7 +264,6 @@
         </div>
 
         <div class="p-6 space-y-6">
-          <!-- Ringkasan Identitas & Skor -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm">
             <div>
               <div class="text-xs text-slate-500 font-semibold">Nama Peserta</div>
@@ -287,7 +283,6 @@
             </div>
           </div>
 
-          <!-- Kartu Skor Otomatis & Status Isian -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="p-4 rounded-xl bg-blue-50 border border-blue-200 text-center">
               <div class="text-xs font-bold uppercase text-blue-700">Benar PG / Benar-Salah</div>
@@ -306,7 +301,6 @@
             </div>
           </div>
 
-          <!-- Tombol Kirim Hasil ke WhatsApp & Google Sheets -->
           <div class="p-5 rounded-2xl bg-slate-900 text-white space-y-3">
             <h3 class="text-base font-extrabold">Kirim Laporan Hasil ke Guru</h3>
             <p class="text-xs sm:text-sm text-slate-300">
@@ -323,7 +317,6 @@
             <p id="sheetSyncStatusText" class="text-xs text-sky-300"></p>
           </div>
 
-          <!-- Rincian Jawaban 5 Soal Isian Siswa -->
           <div>
             <h3 class="text-base font-extrabold text-slate-900 mb-3">Rincian Jawaban Isian Singkat (Untuk Ditinjau Guru)</h3>
             <div id="resEssayReviewList" class="space-y-2.5">
@@ -357,7 +350,6 @@
         </div>
       </div>
 
-      <!-- Tab Navigasi Panel Guru -->
       <div class="flex flex-wrap gap-2">
         <button id="tabBtnSchedule" onclick="switchTeacherTab('schedule')" class="px-4 py-2.5 rounded-xl bg-blue-700 text-white font-bold text-sm shadow-xs">
           1. Jadwal Ujian Per Mapel
@@ -374,17 +366,26 @@
       <div id="teacherTabSchedule" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Jadwal Pelaksanaan Otomatis Per Mata Pelajaran</h3>
-            <p class="text-xs sm:text-sm text-slate-600">Paket soal otomatis aktif saat waktu perangkat memasuki rentang <strong>Waktu Mulai</strong> hingga <strong>Waktu Selesai</strong>.</p>
+            <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Jadwal Terpusat (Google Sheets) &amp; Cadangan Lokal</h3>
+            <p class="text-xs sm:text-sm text-slate-600">
+              Jadwal otomatis disinkronkan dari <strong>Google Sheets</strong> dan disalin ke tabel di bawah. Jika sedang offline, sistem memakai jadwal cadangan lokal.
+            </p>
           </div>
-          <div class="flex gap-2">
+          <div class="flex flex-wrap gap-2">
+            <button onclick="fetchCentralSchedules(true)" class="px-3.5 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold text-xs transition">
+              ↻ Tarik Jadwal Pusat
+            </button>
             <button onclick="setAllSchedulesTodayDemo()" class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs transition">
-              Atur Semua Aktif Hari Ini
+              Atur Cadangan Aktif Hari Ini
             </button>
             <button onclick="saveScheduleSettings()" class="px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs sm:text-sm shadow transition">
-              Simpan Jadwal
+              Simpan Cadangan Lokal
             </button>
           </div>
+        </div>
+
+        <div id="teacherCentralScheduleSummary" class="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-950">
+          Memeriksa status jadwal terpusat Google Apps Script...
         </div>
 
         <div class="overflow-x-auto">
@@ -395,7 +396,8 @@
                 <th class="p-3">Waktu Mulai</th>
                 <th class="p-3">Waktu Selesai</th>
                 <th class="p-3">Durasi (Menit)</th>
-                <th class="p-3 rounded-tr-xl">Status Saat Ini</th>
+                <th class="p-3">Sumber</th>
+                <th class="p-3 rounded-tr-xl">Status Aktif Saat Ini</th>
               </tr>
             </thead>
             <tbody id="scheduleTableBody" class="divide-y divide-slate-100">
@@ -440,10 +442,10 @@
 
           <div class="space-y-2">
             <label for="cfgGoogleSheetUrl" class="block text-xs font-bold uppercase tracking-wide text-slate-700">
-              URL Web App Google Apps Script (Google Sheets)
+              URL Web App Google Apps Script (Kirim Nilai Siswa)
             </label>
             <input id="cfgGoogleSheetUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-600" />
-            <p class="text-xs text-slate-500">Tempelkan tautan deployment Web App Google Apps Script sekolah Anda.</p>
+            <p class="text-xs text-slate-500">URL Web App untuk mengirim hasil nilai siswa ke spreadsheet rekap nilai.</p>
           </div>
         </div>
 
@@ -453,33 +455,16 @@
           </button>
         </div>
 
-        <!-- Panduan Singkat Pemasangan Google Apps Script -->
         <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-          <h4 class="text-sm font-extrabold text-slate-900">Panduan Singkat Menghubungkan ke Google Sheets</h4>
-          <ol class="list-decimal list-inside text-xs text-slate-700 space-y-1">
-            <li>Buka <strong>Google Sheets</strong> baru, lalu pilih menu <strong>Ekstensi → Apps Script</strong>.</li>
-            <li>Salin kode penerima di bawah ini, lalu klik <strong>Terapkan (Deploy) → Deployment baru → Aplikasi Web</strong> (Akses: <em>Siapa saja / Anyone</em>).</li>
-            <li>Salin URL Web App yang muncul ke kolom di atas.</li>
-          </ol>
-          <pre class="p-3 rounded-lg bg-slate-900 text-emerald-300 text-[11px] overflow-x-auto font-mono leading-relaxed">function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = JSON.parse(e.postData.contents);
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(["Waktu", "Sekolah", "Nama Siswa", "Kelas", "No Absen", "Mata Pelajaran", "Benar PG", "Skor PG", "Skor Isian Guru", "Nilai Akhir", "Status", "Jawaban Isian 1-5"]);
-  }
-  sheet.appendRow([
-    data.timestamp, data.school, data.studentName, data.studentClass, data.studentAbsen,
-    data.subjectName, data.pgCorrect, data.pgScore, data.essayScore, data.totalScore,
-    data.status, data.essaySummary
-  ]);
-  return ContentService.createTextOutput(JSON.stringify({result: "success"})).setMimeType(ContentService.MimeType.JSON);
-}</pre>
+          <h4 class="text-sm font-extrabold text-slate-900">Info Sumber Jadwal Terpusat (Aktif Otomatis)</h4>
+          <p class="text-xs text-slate-700 break-all">
+            Endpoint Jadwal: <code class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-900">https://script.google.com/macros/s/AKfycbypEVJE4ckgH634Gj4WWPRk0QntDKFBLmfFilOOVuaXPTMUgABXzd4zaXg8eQ-h2DM/exec</code>
+          </p>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Teks footer menjadi pemicu akses tersembunyi Panel Guru (5 kali klik) -->
   <footer class="bg-white border-t border-slate-200 py-4 px-4 text-center text-xs text-slate-500 mt-10">
     <span id="footerSecretTrigger" title="Sistem Informasi Ujian Sekolah" class="cursor-default select-none hover:text-slate-700 transition">
       &copy; 2026 <strong>Sekolah Dasar Negeri 17 Woja</strong> • Sistem CBT Ujian Akhir Semester Ganjil Kelas VI Kurikulum Merdeka
@@ -490,7 +475,6 @@
   <script>
     // =========================================================================
     // 1. BANK SOAL LENGKAP 6 MATA PELAJARAN INTI KELAS 6 SEMESTER GANJIL
-    //    Setiap mapel memiliki 30 soal PG/Benar-Salah + 5 soal Isian Singkat
     // =========================================================================
     const SUBJECT_BANK = [
       {
@@ -781,8 +765,37 @@
       SIMULATION: 'sdn17woja_cbt_sim_mode_v1'
     };
 
-    // Kata sandi langsung Panel Guru sesuai permintaan
     const TEACHER_PASSWORD = 'admin17';
+
+    // URL Web App Google Apps Script untuk jadwal terpusat seluruh siswa
+    const CENTRAL_SCHEDULE_WEB_APP_URL =
+      'https://script.google.com/macros/s/AKfycbypEVJE4ckgH634Gj4WWPRk0QntDKFBLmfFilOOVuaXPTMUgABXzd4zaXg8eQ-h2DM/exec';
+
+    const SUBJECT_ID_ALIASES = {
+      pancasila: 'pancasila',
+      ppkn: 'pancasila',
+      pendidikan_pancasila: 'pancasila',
+      bindo: 'bindo',
+      bahasa_indonesia: 'bindo',
+      matematika: 'matematika',
+      mtk: 'matematika',
+      ipas: 'ipas',
+      seni: 'seni',
+      seni_budaya: 'seni',
+      sbdp: 'seni',
+      inggris: 'inggris',
+      binggris: 'inggris',
+      bahasa_inggris: 'inggris',
+      english: 'inggris'
+    };
+
+    function normalizeSubjectId(rawId) {
+      const cleaned = String(rawId || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[\s-]+/g, '_');
+      return SUBJECT_ID_ALIASES[cleaned] || cleaned;
+    }
 
     function getDefaultSchedules() {
       const now = new Date();
@@ -843,8 +856,14 @@
     })();
 
     let simulationMode = localStorage.getItem(STORAGE_KEYS.SIMULATION) === 'true';
+    let centralSchedules = {};
+    let centralSyncMeta = {
+      status: 'loading',
+      message: 'Menghubungkan ke jadwal terpusat Google Apps Script...',
+      updatedAt: null
+    };
     let isTeacherAuthenticated = false;
-    let currentView = 'studentHome'; // 'studentHome' | 'examRoom' | 'examResult' | 'teacherPanel'
+    let currentView = 'studentHome';
     let activeExamSession = null;
     let examTimerInterval = null;
     let lastCompletedResult = null;
@@ -852,7 +871,191 @@
     let secretTapTimer = null;
 
     // =========================================================================
-    // 3. TOAST & MODAL DIALOG KUSTOM + AUTENTIKASI SEDERHANA ('admin17')
+    // 2B. PENGAMBILAN & SINKRONISASI JADWAL TERPUSAT DARI GOOGLE APPS SCRIPT
+    // =========================================================================
+    // Membaca properti baris secara toleran (baik "mapel_id" maupun "Kolom A (mapel_id)")
+    function extractRowField(rowObj, fieldKey, fallbackIndex) {
+      if (!rowObj || typeof rowObj !== 'object') return undefined;
+      if (rowObj[fieldKey] !== undefined) return rowObj[fieldKey];
+      const keys = Object.keys(rowObj);
+      const matchedKey = keys.find((k) => {
+        const lower = k.toLowerCase();
+        return lower === fieldKey || lower.includes(`(${fieldKey})`) || lower.endsWith(fieldKey);
+      });
+      if (matchedKey) return rowObj[matchedKey];
+      if (typeof fallbackIndex === 'number' && keys[fallbackIndex] !== undefined) {
+        return rowObj[keys[fallbackIndex]];
+      }
+      return undefined;
+    }
+
+    function updateCentralSyncUI() {
+      const dot = document.getElementById('centralSyncDot');
+      const text = document.getElementById('centralSyncStatusText');
+      if (!dot || !text) return;
+
+      if (centralSyncMeta.status === 'synced') {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block';
+        text.className = 'font-semibold text-emerald-800';
+      } else if (centralSyncMeta.status === 'loading') {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping inline-block';
+        text.className = 'font-semibold text-amber-800';
+      } else {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500 inline-block';
+        text.className = 'font-semibold text-rose-700';
+      }
+      text.textContent = centralSyncMeta.message;
+
+      const teacherSummary = document.getElementById('teacherCentralScheduleSummary');
+      if (teacherSummary) {
+        const count = Object.keys(centralSchedules).length;
+        if (centralSyncMeta.status === 'synced') {
+          teacherSummary.className = 'p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950';
+          teacherSummary.innerHTML = `<strong>Terhubung ke Jadwal Terpusat Google Sheets:</strong> Ditemukan <strong>${count}</strong> mata pelajaran dari server pusat (${escapeHtml(centralSyncMeta.message)}). Nilai waktu di tabel di bawah otomatis disinkronkan.`;
+        } else {
+          teacherSummary.className = 'p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950';
+          teacherSummary.innerHTML = `<strong>Status Jadwal Pusat:</strong> ${escapeHtml(centralSyncMeta.message)} — Sistem menggunakan jadwal cadangan lokal.`;
+        }
+      }
+    }
+
+    async function fetchCentralSchedules(manualTrigger = false) {
+      centralSyncMeta = {
+        status: 'loading',
+        message: 'Memuat jadwal terpusat...',
+        updatedAt: centralSyncMeta.updatedAt
+      };
+      updateCentralSyncUI();
+
+      try {
+        const response = await fetch(CENTRAL_SCHEDULE_WEB_APP_URL, { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const payload = await response.json();
+        const rows = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload.jadwal)
+            ? payload.jadwal
+            : [];
+
+        if (!rows.length) {
+          throw new Error('Data jadwal kosong di Google Sheets');
+        }
+
+        const parsedMap = {};
+        rows.forEach((item) => {
+          const rawMapel = extractRowField(item, 'mapel_id', 0);
+          const id = normalizeSubjectId(rawMapel);
+          if (!id) return;
+
+          const rawMulai = extractRowField(item, 'mulai', 2);
+          const rawSelesai = extractRowField(item, 'selesai', 3);
+          const rawDurasi = extractRowField(item, 'durasi_menit', 4);
+          const rawAktif = extractRowField(item, 'aktif', 5);
+          const rawNama = extractRowField(item, 'nama_mapel', 1);
+
+          const startMs = Date.parse(rawMulai);
+          const endMs = Date.parse(rawSelesai);
+          const isActiveFlag =
+            rawAktif === undefined ||
+            rawAktif === null ||
+            rawAktif === '' ||
+            rawAktif === true ||
+            String(rawAktif).trim().toLowerCase() === 'true' ||
+            String(rawAktif).trim() === '1';
+
+          const parsedEntry = {
+            start: !isNaN(startMs) ? toLocalDatetimeInputValue(new Date(startMs)) : '',
+            end: !isNaN(endMs) ? toLocalDatetimeInputValue(new Date(endMs)) : '',
+            startMs,
+            endMs,
+            durationMinutes: Number(rawDurasi) || 60,
+            aktif: isActiveFlag,
+            namaMapel: rawNama || ''
+          };
+
+          parsedMap[id] = parsedEntry;
+
+          // Sinkronkan juga ke state jadwal lokal agar Panel Guru ikut menampilkan waktu yang sama
+          if (parsedEntry.start && parsedEntry.end) {
+            subjectSchedules[id] = {
+              start: parsedEntry.start,
+              end: parsedEntry.end,
+              durationMinutes: parsedEntry.durationMinutes
+            };
+          }
+        });
+
+        if (Object.keys(parsedMap).length === 0) {
+          throw new Error('Tidak ada baris mapel valid di Google Sheets');
+        }
+
+        localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(subjectSchedules));
+        centralSchedules = parsedMap;
+        const syncTimeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        centralSyncMeta = {
+          status: 'synced',
+          message: `Jadwal Terpusat Sinkron (${Object.keys(parsedMap).length} Mapel • ${syncTimeStr})`,
+          updatedAt: new Date().toISOString()
+        };
+
+        updateCentralSyncUI();
+        if (currentView === 'studentHome') {
+          renderSubjectCards();
+        } else if (currentView === 'teacherPanel') {
+          renderScheduleTable();
+        }
+
+        if (manualTrigger) {
+          showToast('Jadwal ujian terpusat berhasil diperbarui dari Google Sheets.', '✅');
+        }
+      } catch (err) {
+        console.warn('Gagal mengambil jadwal terpusat, memakai cadangan lokal:', err);
+        centralSchedules = {};
+        centralSyncMeta = {
+          status: 'fallback',
+          message: 'Jadwal Cadangan Lokal (Gagal terhubung ke server jadwal pusat)',
+          updatedAt: centralSyncMeta.updatedAt
+        };
+        updateCentralSyncUI();
+        if (manualTrigger) {
+          showToast('Tidak dapat memuat jadwal pusat. Menggunakan jadwal cadangan lokal.', '⚠️');
+        }
+      }
+    }
+
+    function getEffectiveSchedule(subjectId) {
+      const central = centralSchedules[subjectId];
+      if (central) {
+        return {
+          source: 'central',
+          start: central.start,
+          end: central.end,
+          startMs: central.startMs,
+          endMs: central.endMs,
+          durationMinutes: central.durationMinutes || 60,
+          aktif: central.aktif
+        };
+      }
+
+      const local = subjectSchedules[subjectId] || {};
+      const startMs = local.start ? new Date(local.start).getTime() : NaN;
+      const endMs = local.end ? new Date(local.end).getTime() : NaN;
+      return {
+        source: 'local',
+        start: local.start || '',
+        end: local.end || '',
+        startMs,
+        endMs,
+        durationMinutes: local.durationMinutes || 60,
+        aktif: true
+      };
+    }
+
+    // =========================================================================
+    // 3. TOAST & MODAL DIALOG KUSTOM + AUTENTIKASI PANEL GURU
     // =========================================================================
     function showToast(message, icon = 'ℹ️') {
       const banner = document.getElementById('toastBanner');
@@ -958,16 +1161,31 @@
           canStart: true
         };
       }
-      const cfg = subjectSchedules[subjectId];
-      if (!cfg || !cfg.start || !cfg.end) {
-        return { state: 'UPCOMING', label: 'Belum Dijadwalkan', detail: 'Menunggu jadwal guru', canStart: false };
-      }
-      const now = new Date();
-      const start = new Date(cfg.start);
-      const end = new Date(cfg.end);
 
-      if (now < start) {
-        const diffMs = start - now;
+      const cfg = getEffectiveSchedule(subjectId);
+
+      if (cfg.aktif === false) {
+        return {
+          state: 'CLOSED',
+          label: 'Dinonaktifkan Panitia',
+          detail: 'Paket soal sedang dinonaktifkan pada jadwal pusat',
+          canStart: false
+        };
+      }
+
+      if (isNaN(cfg.startMs) || isNaN(cfg.endMs)) {
+        return {
+          state: 'UPCOMING',
+          label: 'Belum Dijadwalkan',
+          detail: 'Menunggu jadwal guru',
+          canStart: false
+        };
+      }
+
+      const nowMs = Date.now();
+
+      if (nowMs < cfg.startMs) {
+        const diffMs = cfg.startMs - nowMs;
         const hrs = Math.floor(diffMs / 3600000);
         const mins = Math.floor((diffMs % 3600000) / 60000);
         const secs = Math.floor((diffMs % 60000) / 1000);
@@ -981,8 +1199,9 @@
           canStart: false
         };
       }
-      if (now >= start && now <= end) {
-        const remMs = end - now;
+
+      if (nowMs >= cfg.startMs && nowMs <= cfg.endMs) {
+        const remMs = cfg.endMs - nowMs;
         const remMins = Math.max(1, Math.floor(remMs / 60000));
         return {
           state: 'ACTIVE',
@@ -991,6 +1210,7 @@
           canStart: true
         };
       }
+
       return {
         state: 'CLOSED',
         label: 'Selesai / Ditutup',
@@ -1051,7 +1271,7 @@
       };
 
       grid.innerHTML = SUBJECT_BANK.map((subj) => {
-        const sched = subjectSchedules[subj.id] || {};
+        const sched = getEffectiveSchedule(subj.id);
         const status = getScheduleStatus(subj.id);
 
         let badgeClass = 'bg-slate-200 text-slate-700';
@@ -1059,13 +1279,20 @@
         else if (status.state === 'UPCOMING') badgeClass = 'bg-amber-100 text-amber-900 border border-amber-300';
         else if (status.state === 'CLOSED') badgeClass = 'bg-rose-100 text-rose-800 border border-rose-200';
 
+        const sourceBadge = sched.source === 'central'
+          ? '<span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Jadwal Pusat</span>'
+          : '<span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">Jadwal Lokal</span>';
+
         return `
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition p-5 flex flex-col justify-between">
+          <div data-mapel="${subj.id}" class="bg-white rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition p-5 flex flex-col justify-between">
             <div>
               <div class="flex items-start justify-between gap-2">
-                <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold border ${colorMap[subj.color] || 'bg-slate-100 text-slate-800'}">
-                  ${subj.code}
-                </span>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold border ${colorMap[subj.color] || 'bg-slate-100 text-slate-800'}">
+                    ${subj.code}
+                  </span>
+                  ${sourceBadge}
+                </div>
                 <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold ${badgeClass}">
                   ${status.label}
                 </span>
@@ -1082,13 +1309,13 @@
             </div>
 
             <div class="mt-4 pt-3 border-t border-slate-100">
-              <div class="text-[11px] font-semibold ${status.state === 'ACTIVE' ? 'text-emerald-700' : 'text-slate-500'} mb-2">
+              <div class="status-jadwal text-[11px] font-semibold ${status.state === 'ACTIVE' ? 'text-emerald-700' : 'text-slate-500'} mb-2">
                 ${status.detail}
               </div>
               <button
                 onclick="startSubjectExam('${subj.id}')"
                 ${status.canStart ? '' : 'disabled'}
-                class="w-full py-3 px-4 rounded-xl font-bold text-sm transition shadow-xs ${
+                class="btn-mulai-ujian w-full py-3 px-4 rounded-xl font-bold text-sm transition shadow-xs ${
                   status.canStart
                     ? 'bg-blue-700 hover:bg-blue-800 text-white cursor-pointer'
                     : 'bg-slate-200 text-slate-500 cursor-not-allowed'
@@ -1178,7 +1405,7 @@
       }
 
       const subject = SUBJECT_BANK.find((s) => s.id === subjectId);
-      const sched = subjectSchedules[subjectId] || { durationMinutes: 60 };
+      const sched = getEffectiveSchedule(subjectId);
 
       openConfirmModal({
         title: `Mulai Ujian ${subject.name}?`,
@@ -1594,6 +1821,7 @@
     function openTeacherPanel() {
       switchView('teacherPanel');
       updateSimModeButtonUI();
+      updateCentralSyncUI();
       renderScheduleTable();
       renderSubmissionsList();
       document.getElementById('cfgWhatsappNumber').value = appSettings.whatsappNumber || '';
@@ -1650,8 +1878,12 @@
     function renderScheduleTable() {
       const tbody = document.getElementById('scheduleTableBody');
       tbody.innerHTML = SUBJECT_BANK.map((subj) => {
-        const sched = subjectSchedules[subj.id] || { start: '', end: '', durationMinutes: 60 };
+        const effective = getEffectiveSchedule(subj.id);
         const status = getScheduleStatus(subj.id);
+        const sourceTag = effective.source === 'central'
+          ? '<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[11px] font-bold">Google Sheets</span>'
+          : '<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-semibold">Cadangan Lokal</span>';
+
         return `
           <tr>
             <td class="p-3 font-bold text-slate-900">
@@ -1659,14 +1891,15 @@
               <div class="text-xs font-normal text-slate-500">${subj.code}</div>
             </td>
             <td class="p-3">
-              <input id="schedStart_${subj.id}" type="datetime-local" value="${sched.start}" class="px-2.5 py-2 rounded-lg border border-slate-300 text-xs font-medium" />
+              <input id="schedStart_${subj.id}" type="datetime-local" value="${effective.start}" class="px-2.5 py-2 rounded-lg border border-slate-300 text-xs font-medium" />
             </td>
             <td class="p-3">
-              <input id="schedEnd_${subj.id}" type="datetime-local" value="${sched.end}" class="px-2.5 py-2 rounded-lg border border-slate-300 text-xs font-medium" />
+              <input id="schedEnd_${subj.id}" type="datetime-local" value="${effective.end}" class="px-2.5 py-2 rounded-lg border border-slate-300 text-xs font-medium" />
             </td>
             <td class="p-3">
-              <input id="schedDur_${subj.id}" type="number" min="10" max="180" value="${sched.durationMinutes || 60}" class="w-20 px-2.5 py-2 rounded-lg border border-slate-300 text-xs font-bold text-center" />
+              <input id="schedDur_${subj.id}" type="number" min="10" max="180" value="${effective.durationMinutes || 60}" class="w-20 px-2.5 py-2 rounded-lg border border-slate-300 text-xs font-bold text-center" />
             </td>
+            <td class="p-3">${sourceTag}</td>
             <td class="p-3" id="schedStatusCell_${subj.id}">
               <span class="inline-block px-2.5 py-1 rounded-full text-xs font-bold ${
                 status.state === 'ACTIVE'
@@ -1711,7 +1944,7 @@
       });
       localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(subjectSchedules));
       updateScheduleStatusesInTable();
-      showToast('Jadwal pelaksanaan ujian berhasil disimpan!', '✅');
+      showToast('Jadwal cadangan lokal berhasil disimpan!', '✅');
     }
 
     function setAllSchedulesTodayDemo() {
@@ -1727,7 +1960,7 @@
       });
       localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(subjectSchedules));
       renderScheduleTable();
-      showToast('Semua jadwal diatur aktif mulai sekarang hingga 4 jam ke depan.', '🗓️');
+      showToast('Semua jadwal cadangan lokal diatur aktif mulai sekarang hingga 4 jam ke depan.', '🗓️');
     }
 
     // =========================================================================
@@ -1908,7 +2141,6 @@
     // 12. INISIALISASI SAAT HALAMAN DIMUAT
     // =========================================================================
     window.onload = function () {
-      // Akses Panel Guru tersembunyi #1: 5 kali klik pada teks footer nama sekolah dalam 2,5 detik
       const footerTrigger = document.getElementById('footerSecretTrigger');
       if (footerTrigger) {
         footerTrigger.addEventListener('click', () => {
@@ -1925,7 +2157,6 @@
         });
       }
 
-      // Akses Panel Guru tersembunyi #2: Shortcut keyboard Ctrl + Shift + G
       document.addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.shiftKey && e.key && e.key.toLowerCase() === 'g') {
           e.preventDefault();
@@ -1935,6 +2166,14 @@
 
       updateClockAndCards();
       setInterval(updateClockAndCards, 1000);
+
+      // Tarik jadwal terpusat segera saat halaman dimuat dan perbarui berkala tiap 60 detik
+      fetchCentralSchedules(false);
+      setInterval(() => {
+        if (currentView === 'studentHome' || currentView === 'teacherPanel') {
+          fetchCentralSchedules(false);
+        }
+      }, 60000);
     };
   </script>
 </body>

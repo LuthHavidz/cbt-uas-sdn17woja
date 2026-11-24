@@ -1,0 +1,2576 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CBT SAS Ganjil Kelas 6 — Sekolah Dasar Negeri 17 Woja</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .option-card {
+      transition: all 0.15s ease-in-out;
+    }
+    .option-card:active {
+      transform: scale(0.99);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- ==================== HEADER UTAMA ==================== -->
+  <header class="bg-gradient-to-r from-sky-800 via-blue-800 to-indigo-900 text-white shadow-lg sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/15 border border-white/25 flex items-center justify-center shrink-0 shadow-inner">
+          <svg class="w-7 h-7 text-amber-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+          </svg>
+        </div>
+        <div>
+          <span class="inline-block text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-400/20 text-amber-200 border border-amber-300/30">
+            Kurikulum Merdeka • Semester Ganjil
+          </span>
+          <h1 class="text-base sm:text-xl font-extrabold tracking-tight leading-tight mt-0.5">
+            Sekolah Dasar Negeri 17 Woja
+          </h1>
+          <p class="text-xs sm:text-sm text-sky-100/90">Computer-Based Test (CBT) — SAS Kelas VI (Enam)</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3 ml-auto">
+        <div id="liveClockBox" class="hidden md:flex flex-col items-end text-right bg-white/10 px-3 py-1.5 rounded-lg border border-white/15">
+          <span id="liveDateText" class="text-[11px] text-sky-200 font-medium">Memuat tanggal...</span>
+          <span id="liveTimeText" class="text-sm font-bold font-mono tracking-wider text-white">00:00:00</span>
+        </div>
+
+        <button id="btnExitTeacherMode" onclick="switchToStudentView()" class="hidden px-3.5 py-2.5 rounded-xl bg-white text-blue-900 hover:bg-sky-50 font-bold text-xs sm:text-sm shadow-sm items-center gap-2 transition">
+          <span>← Mode Siswa</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== BANNER NOTIFIKASI ==================== -->
+  <div id="toastBanner" class="fixed bottom-4 right-4 z-50 max-w-sm hidden transform transition-all duration-300">
+    <div id="toastInner" class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl border border-slate-700 flex items-start gap-3">
+      <span id="toastIcon" class="text-lg leading-none mt-0.5">ℹ️</span>
+      <div class="text-sm font-medium leading-snug" id="toastMessage">Pesan notifikasi</div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DIALOG KUSTOM ==================== -->
+  <div id="customModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+      <h3 id="modalTitle" class="text-lg font-extrabold text-slate-900">Konfirmasi</h3>
+      <p id="modalBody" class="text-sm text-slate-600 mt-2 leading-relaxed">Apakah Anda yakin?</p>
+      <div id="modalInputWrap" class="mt-4 hidden">
+        <label for="modalInput" class="block text-xs font-bold uppercase tracking-wide text-slate-600 mb-1.5">Kata Sandi Panel Guru</label>
+        <div class="relative flex items-center">
+          <input id="modalInput" type="password" autocomplete="off" placeholder="Masukkan kata sandi..." class="w-full pr-11 px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm" />
+          <button id="btnTogglePasswordVis" type="button" onclick="toggleModalPasswordVisibility()" aria-label="Tampilkan atau sembunyikan kata sandi" class="absolute right-2.5 p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition">
+            <svg id="eyeIconShow" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <svg id="eyeIconHide" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="mt-6 flex items-center justify-end gap-2.5">
+        <button id="modalCancelBtn" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition">
+          Batal
+        </button>
+        <button id="modalConfirmBtn" class="px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm shadow transition">
+          Lanjutkan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== KONTEN UTAMA ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+
+    <!-- ==================== VIEW 1: BERANDA SISWA & DAFTAR MAPEL ==================== -->
+    <section id="viewStudentHome" class="space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+          <div>
+            <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">Identitas Peserta Ujian</h2>
+            <p class="text-sm text-slate-600 mt-0.5">Isi data diri dengan benar sebelum memilih paket soal mata pelajaran yang sedang aktif.</p>
+          </div>
+          <div id="simModeBadge" class="hidden inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            Mode Simulasi Aktif: Semua Jadwal Mapel Dibuka
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5">
+          <div>
+            <label for="inputStudentName" class="block text-xs font-bold uppercase tracking-wide text-slate-600 mb-1.5">Nama Lengkap Siswa *</label>
+            <input id="inputStudentName" type="text" placeholder="Contoh: Ahmad Fauzan" class="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-medium" />
+          </div>
+          <div>
+            <label for="inputStudentClass" class="block text-xs font-bold uppercase tracking-wide text-slate-600 mb-1.5">Kelas / Rombel *</label>
+            <select id="inputStudentClass" class="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-medium">
+              <option value="VI-A">Kelas VI-A</option>
+              <option value="VI-B">Kelas VI-B</option>
+              <option value="VI-C">Kelas VI-C</option>
+            </select>
+          </div>
+          <div>
+            <label for="inputStudentAbsen" class="block text-xs font-bold uppercase tracking-wide text-slate-600 mb-1.5">Nomor Absen / Peserta *</label>
+            <input id="inputStudentAbsen" type="text" placeholder="Contoh: 07" class="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-medium" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Daftar 9 Paket Soal Mata Pelajaran -->
+      <div>
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">Pilih Paket Soal Mata Pelajaran</h2>
+            <p class="text-sm text-slate-600">Setiap paket terdiri dari <strong>30 soal PG/Benar-Salah (acak)</strong> &amp; <strong>5 soal isian singkat</strong>.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <div id="centralSyncBadge" class="text-xs bg-white px-3 py-1.5 rounded-lg border border-slate-200 flex items-center gap-2">
+              <span id="centralSyncDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span>
+              <span id="centralSyncStatusText" class="font-semibold text-slate-700">Memuat jadwal terpusat...</span>
+            </div>
+            <button type="button" onclick="fetchCentralSchedules(true)" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 transition">
+              ↻ Segarkan Jadwal
+            </button>
+          </div>
+        </div>
+
+        <div id="subjectCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          <!-- Dirender dinamis oleh JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: RUANG UJIAN CBT AKTIF ==================== -->
+    <section id="viewExamRoom" class="hidden space-y-5">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <span id="examSubjectBadge" class="px-2.5 py-0.5 rounded-md bg-blue-100 text-blue-800 text-xs font-bold">Mata Pelajaran</span>
+            <span id="examQuestionTypeBadge" class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold">Pilihan Ganda</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-600 mt-1">
+            Peserta: <strong id="examStudentInfo" class="text-slate-900">-</strong>
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <div class="text-[10px] uppercase font-bold tracking-wider text-amber-700">Sisa Waktu</div>
+              <div id="examTimerDisplay" class="text-sm sm:text-base font-extrabold font-mono">60:00</div>
+            </div>
+          </div>
+
+          <button onclick="confirmFinishExam()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow transition">
+            Selesai &amp; Kirim
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        <div class="lg:col-span-8 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-7 flex flex-col justify-between min-h-[420px]">
+          <div>
+            <div class="flex items-center justify-between gap-2 pb-4 border-b border-slate-100">
+              <span class="text-sm sm:text-base font-extrabold text-blue-800">
+                Soal Nomor <span id="currentQuestionNumber">1</span> <span class="text-slate-400 font-semibold">dari 35</span>
+              </span>
+              <label class="inline-flex items-center gap-2 cursor-pointer select-none px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-xs font-bold">
+                <input id="checkboxDoubt" type="checkbox" onchange="toggleDoubtCurrent()" class="w-4 h-4 accent-amber-500 rounded" />
+                Tandai Ragu-Ragu
+              </label>
+            </div>
+
+            <div id="questionTextContainer" class="mt-5 text-base sm:text-lg font-medium text-slate-900 leading-relaxed">
+              Memuat soal...
+            </div>
+
+            <div id="answerInputContainer" class="mt-6 space-y-3">
+              <!-- Dirender dinamis -->
+            </div>
+          </div>
+
+          <div class="mt-8 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+            <button id="btnPrevQuestion" onclick="navigateQuestion(-1)" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-800 font-bold text-sm flex items-center gap-2 transition">
+              ← Sebelumnya
+            </button>
+
+            <span id="answeredCounterText" class="text-xs font-semibold text-slate-500">
+              Terjawab: 0 / 35
+            </span>
+
+            <button id="btnNextQuestion" onclick="navigateQuestion(1)" class="px-5 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm flex items-center gap-2 shadow-sm transition">
+              Selanjutnya →
+            </button>
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+          <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wide">Navigasi Nomor Soal</h3>
+          <p class="text-xs text-slate-500 mt-0.5">No. 1–30: PG / Benar-Salah • No. 31–35: Isian</p>
+
+          <div class="flex flex-wrap gap-3 text-[11px] font-semibold text-slate-600 mt-3 pb-3 border-b border-slate-100">
+            <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-600 inline-block"></span>Dijawab</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-400 inline-block"></span>Ragu</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-200 inline-block"></span>Belum</span>
+          </div>
+
+          <div id="questionGridNav" class="grid grid-cols-7 sm:grid-cols-10 lg:grid-cols-7 gap-2 mt-4">
+            <!-- Tombol nomor 1 - 35 -->
+          </div>
+
+          <button onclick="confirmFinishExam()" class="w-full mt-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow transition">
+            Kumpulkan Jawaban Ujian
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: HASIL UJIAN & KIRIM WA / GOOGLE SHEETS ==================== -->
+    <section id="viewExamResult" class="hidden max-w-4xl mx-auto space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-emerald-700 to-teal-800 text-white p-6">
+          <span class="inline-block text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-white/20">
+            Bukti Penyelesaian Ujian
+          </span>
+          <h2 class="text-xl sm:text-2xl font-extrabold mt-1">Ujian Telah Selesai Dikirim!</h2>
+          <p class="text-sm text-emerald-100 mt-0.5">Sekolah Dasar Negeri 17 Woja — SAS Ganjil Kelas VI</p>
+        </div>
+
+        <div class="p-6 space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm">
+            <div>
+              <div class="text-xs text-slate-500 font-semibold">Nama Peserta</div>
+              <div id="resStudentName" class="font-bold text-slate-900 text-base">-</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold">Kelas / Nomor Absen</div>
+              <div id="resStudentClassAbsen" class="font-bold text-slate-900 text-base">-</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold">Mata Pelajaran</div>
+              <div id="resSubjectName" class="font-bold text-blue-800 text-base">-</div>
+            </div>
+            <div>
+              <div class="text-xs text-slate-500 font-semibold">Waktu Selesai</div>
+              <div id="resTimestamp" class="font-semibold text-slate-700">-</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-blue-50 border border-blue-200 text-center">
+              <div class="text-xs font-bold uppercase text-blue-700">Benar PG / Benar-Salah</div>
+              <div id="resPgCorrect" class="text-3xl font-extrabold text-blue-900 mt-1">0 / 30</div>
+              <div class="text-xs text-blue-600 mt-0.5">Dikoreksi otomatis sistem</div>
+            </div>
+            <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-center">
+              <div class="text-xs font-bold uppercase text-emerald-700">Skor Sementara (PG/BS)</div>
+              <div id="resPgScore" class="text-3xl font-extrabold text-emerald-900 mt-1">0</div>
+              <div class="text-xs text-emerald-600 mt-0.5">Maksimal 75 poin (2,5/soal)</div>
+            </div>
+            <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-center">
+              <div class="text-xs font-bold uppercase text-amber-800">5 Soal Isian Singkat</div>
+              <div class="text-base font-extrabold text-amber-900 mt-2">Menunggu Peninjauan Guru</div>
+              <div class="text-xs text-amber-700 mt-1">Maksimal 25 poin (5/soal)</div>
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-900 text-white space-y-3">
+            <h3 class="text-base font-extrabold">Kirim Laporan Hasil ke Guru</h3>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Gunakan tombol di bawah ini untuk mengirim skor otomatis beserta 5 jawaban isian singkat kepada guru kelas/mata pelajaran.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 pt-1">
+              <button onclick="sendCurrentResultToWhatsApp()" class="flex-1 py-3.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-sm flex items-center justify-center gap-2 shadow transition">
+                <span>📲 Kirim Nilai ke WhatsApp Guru</span>
+              </button>
+              <button id="btnSendSheetResult" onclick="sendCurrentResultToGoogleSheet()" class="flex-1 py-3.5 px-4 rounded-xl bg-sky-500 hover:bg-sky-600 text-slate-950 font-extrabold text-sm flex items-center justify-center gap-2 shadow transition">
+                <span>📊 Kirim ke Google Sheets</span>
+              </button>
+            </div>
+            <p id="sheetSyncStatusText" class="text-xs text-sky-300"></p>
+          </div>
+
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900 mb-3">Rincian Jawaban Isian Singkat (Untuk Ditinjau Guru)</h3>
+            <div id="resEssayReviewList" class="space-y-2.5">
+              <!-- Dirender dinamis -->
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 flex justify-between items-center">
+            <button onclick="returnToStudentHome()" class="px-5 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm shadow transition">
+              ← Kembali ke Daftar Mata Pelajaran
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: PANEL GURU / ADMIN ==================== -->
+    <section id="viewTeacherPanel" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-700">Panel Kontrol Guru • SDN 17 Woja</span>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">Pengaturan Jadwal, Integrasi &amp; Penilaian Manual</h2>
+        </div>
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button id="btnToggleSimMode" onclick="toggleSimulationMode()" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm border transition">
+            Mode Simulasi: NONAKTIF
+          </button>
+          <button onclick="switchToStudentView()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs sm:text-sm transition">
+            Tampilan Siswa
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <button id="tabBtnSchedule" onclick="switchTeacherTab('schedule')" class="px-4 py-2.5 rounded-xl bg-blue-700 text-white font-bold text-sm shadow-xs">
+          1. Jadwal Ujian Per Mapel
+        </button>
+        <button id="tabBtnGrading" onclick="switchTeacherTab('grading')" class="px-4 py-2.5 rounded-xl bg-white text-slate-700 border border-slate-200 font-bold text-sm hover:bg-slate-50">
+          2. Rekap Nilai &amp; Koreksi Isian Manual (<span id="submissionCountBadge">0</span>)
+        </button>
+        <button id="tabBtnIntegration" onclick="switchTeacherTab('integration')" class="px-4 py-2.5 rounded-xl bg-white text-slate-700 border border-slate-200 font-bold text-sm hover:bg-slate-50">
+          3. Pengaturan WhatsApp &amp; Google Sheets
+        </button>
+      </div>
+
+      <!-- TAB 1: PENGATURAN JADWAL UJIAN PER MAPEL -->
+      <div id="teacherTabSchedule" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Jadwal Terpusat (Google Sheets) &amp; Cadangan Lokal</h3>
+            <p class="text-xs sm:text-sm text-slate-600">
+              Jadwal otomatis disinkronkan dari <strong>Google Sheets</strong> dan disalin ke tabel di bawah. Jika sedang offline, sistem memakai jadwal cadangan lokal.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="fetchCentralSchedules(true)" class="px-3.5 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold text-xs transition">
+              ↻ Tarik Jadwal Pusat
+            </button>
+            <button onclick="setAllSchedulesTodayDemo()" class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-xs transition">
+              Atur Cadangan Aktif Hari Ini
+            </button>
+            <button onclick="saveScheduleSettings()" class="px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs sm:text-sm shadow transition">
+              Simpan Cadangan Lokal
+            </button>
+          </div>
+        </div>
+
+        <div id="teacherCentralScheduleSummary" class="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-950">
+          Memeriksa status jadwal terpusat Google Apps Script...
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 text-xs uppercase">
+                <th class="p-3 rounded-tl-xl">Mata Pelajaran</th>
+                <th class="p-3">Waktu Mulai</th>
+                <th class="p-3">Waktu Selesai</th>
+                <th class="p-3">Durasi (Menit)</th>
+                <th class="p-3">Sumber</th>
+                <th class="p-3 rounded-tr-xl">Status Aktif Saat Ini</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleTableBody" class="divide-y divide-slate-100">
+              <!-- Dirender dinamis -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 2: REKAP NILAI & PENINJAUAN MANUAL SOAL ISIAN -->
+      <div id="teacherTabGrading" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Rekap Hasil Ujian &amp; Koreksi Manual Isian (Tersinkron)</h3>
+            <p class="text-xs sm:text-sm text-slate-600">Tarik rekap seluruh siswa dari Google Sheets, koreksi 5 jawaban isian (0–25), lalu sinkronkan nilai kembali ke Google Sheets &amp; perangkat lokal.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button id="btnSyncRekapCloud" onclick="syncSubmissionsWithGoogleSheet(true)" class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-xs transition">
+              🔄 Sinkronkan Rekap &amp; Koreksi
+            </button>
+            <button onclick="exportSubmissionsCSV()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition">
+              Unduh Rekap CSV / Excel
+            </button>
+            <button onclick="confirmClearSubmissions()" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs transition">
+              Hapus Riwayat Lokal
+            </button>
+          </div>
+        </div>
+
+        <div id="gradingSyncBanner" class="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-950 flex flex-wrap items-center justify-between gap-2">
+          <span id="gradingSyncStatusText">Rekap lokal siap digunakan. Klik <strong>Sinkronkan Rekap &amp; Koreksi</strong> untuk memuat data terbaru semua siswa dari Google Sheets.</span>
+          <div class="flex items-center gap-2">
+            <label for="filterGradingSubject" class="font-bold text-slate-700">Filter Mapel:</label>
+            <select id="filterGradingSubject" onchange="renderSubmissionsList()" class="px-2.5 py-1 rounded-lg border border-slate-300 bg-white text-xs font-semibold">
+              <option value="ALL">Semua Mata Pelajaran</option>
+              <option value="pancasila">Pendidikan Pancasila</option>
+              <option value="bindo">Bahasa Indonesia</option>
+              <option value="matematika">Matematika</option>
+              <option value="ipas">IPAS</option>
+              <option value="seni">Seni Budaya</option>
+              <option value="inggris">Bahasa Inggris</option>
+              <option value="pai">PAI &amp; Budi Pekerti</option>
+              <option value="pjok">PJOK</option>
+              <option value="mulok">Muatan Lokal Dompu</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="submissionsListContainer" class="space-y-4">
+          <!-- Daftar hasil ujian siswa -->
+        </div>
+      </div>
+
+      <!-- TAB 3: PENGATURAN WHATSAPP & GOOGLE SHEETS -->
+      <div id="teacherTabIntegration" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="space-y-2">
+            <label for="cfgWhatsappNumber" class="block text-xs font-bold uppercase tracking-wide text-slate-700">
+              Nomor WhatsApp Guru Tujuan (Format 628xxx)
+            </label>
+            <input id="cfgWhatsappNumber" type="text" placeholder="Contoh: 6281234567890" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-600" />
+            <p class="text-xs text-slate-500">Gunakan kode negara <strong>62</strong> di depan tanpa tanda + atau spasi.</p>
+          </div>
+
+          <div class="space-y-2">
+            <label for="cfgGoogleSheetUrl" class="block text-xs font-bold uppercase tracking-wide text-slate-700">
+              URL Web App Google Apps Script (Kirim Nilai Siswa)
+            </label>
+            <input id="cfgGoogleSheetUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-600" />
+            <p class="text-xs text-slate-500">URL Web App untuk mengirim hasil nilai siswa ke spreadsheet rekap nilai.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="saveIntegrationSettings()" class="px-5 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm shadow transition">
+            Simpan Pengaturan Integrasi
+          </button>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+          <h4 class="text-sm font-extrabold text-slate-900">Info Sumber Jadwal Terpusat (Aktif Otomatis)</h4>
+          <p class="text-xs text-slate-700 break-all">
+            Endpoint Jadwal: <code class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-900">https://script.google.com/macros/s/AKfycbypEVJE4ckgH634Gj4WWPRk0QntDKFBLmfFilOOVuaXPTMUgABXzd4zaXg8eQ-h2DM/exec</code>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 py-4 px-4 text-center text-xs text-slate-500 mt-10">
+    <span id="footerSecretTrigger" title="Sistem Informasi Ujian Sekolah" class="cursor-default select-none hover:text-slate-700 transition">
+      &copy; 2026 <strong>Sekolah Dasar Negeri 17 Woja</strong> • Sistem CBT Sumatif Akhir Semester Ganjil Kelas VI Kurikulum Merdeka
+    </span>
+  </footer>
+
+  <!-- ==================== SCRIPT UTAMA APLIKASI CBT ==================== -->
+  <script>
+    // =========================================================================
+    // 1. BANK SOAL LENGKAP 6 MATA PELAJARAN INTI KELAS 6 SEMESTER GANJIL
+    // =========================================================================
+    const SUBJECT_BANK = [
+      {
+        id: 'pancasila',
+        name: 'Pendidikan Pancasila',
+        code: 'PP-06',
+        color: 'rose',
+        description: 'Nilai Pancasila, norma & aturan, hak & kewajiban anak, serta kebinekaan.',
+        pgQuestions: [
+          { q: 'Sikap yang mencerminkan pengamalan sila pertama Pancasila ketika teman berbeda agama sedang beribadah adalah...', options: ['Mengajak bermain di halaman sekolah', 'Menjaga ketenangan dan menghormati waktu ibadahnya', 'Memintanya menyelesaikan ibadah lebih cepat', 'Menanyakan tata cara ibadahnya saat sedang berdoa'], answer: 1 },
+          { q: 'Dalam musyawarah kelas menentukan jadwal piket, muncul dua pendapat berbeda. Sikap paling sesuai sila keempat Pancasila adalah...', options: ['Memaksakan pendapat ketua kelas', 'Meninggalkan ruang kelas', 'Mencari jalan tengah secara kekeluargaan untuk mufakat', 'Memilih tanpa mendengar alasan pihak lain'], answer: 2 },
+          { q: '[Benar / Salah] Membiasakan antre dengan tertib di kantin sekolah merupakan wujud pengamalan nilai keadilan dan ketertiban bersama.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Contoh pelaksanaan kewajiban seorang siswa di lingkungan sekolah adalah...', options: ['Mendapatkan pengajaran dari guru', 'Meminjam buku di perpustakaan sesuai aturan', 'Menjaga kebersihan kelas dan mematuhi tata tertib sekolah', 'Menggunakan fasilitas olahraga saat istirahat'], answer: 2 },
+          { q: 'Pelanggaran terhadap norma kesopanan umumnya mendapatkan sanksi berupa...', options: ['Denda uang dan kurungan penjara', 'Teguran, celaan, atau rasa malu dari masyarakat', 'Pencabutan hak pilih dalam pemilu', 'Penyitaan barang oleh petugas'], answer: 1 },
+          { q: '[Benar / Salah] Undang-Undang Dasar Negara Republik Indonesia Tahun 1945 adalah hukum dasar tertulis yang menjadi pedoman penyelenggaraan negara.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Sikap yang tepat ketika ada peserta didik baru yang berasal dari daerah dan suku berbeda adalah...', options: ['Menertawakan logat bicaranya', 'Mengelompokkan teman berdasarkan daerah asal', 'Menyapa dengan ramah, berteman, dan menghargai budayanya', 'Menyuruhnya meninggalkan kebiasaan daerahnya'], answer: 2 },
+          { q: 'Gotong royong membersihkan selokan lingkungan RT sebelum musim hujan mencerminkan nilai...', options: ['Individualisme dan persaingan', 'Persatuan, kepedulian, dan tanggung jawab sosial', 'Ketergantungan penuh pada pemerintah', 'Kepentingan pribadi di atas umum'], answer: 1 },
+          { q: '[Benar / Salah] Hak anak untuk memperoleh pendidikan dijamin peraturan perundang-undangan dan harus diimbangi dengan tanggung jawab belajar.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Semboyan Bhinneka Tunggal Ika memiliki makna bahwa...', options: ['Semua budaya di Indonesia harus diseragamkan', 'Perbedaan hanya boleh ada di luar negara', 'Berbeda-beda tetapi tetap satu kesatuan Republik Indonesia', 'Satu suku berhak mengatur suku lainnya'], answer: 2 },
+          { q: 'Contoh perilaku taat terhadap norma hukum di jalan raya adalah...', options: ['Memakai helm berstandar dan berhenti saat lampu merah', 'Membunyikan klakson terus-menerus di depan rumah sakit', 'Berjalan di tengah badan jalan raya', 'Mengabaikan rambu batas kecepatan'], answer: 0 },
+          { q: '[Benar / Salah] Keputusan hasil musyawarah yang telah disepakati bersama wajib dilaksanakan dengan penuh tanggung jawab.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Mengapa sikap toleransi sangat penting dijaga di sekolah yang memiliki beragam latar belakang siswa?', options: ['Agar siswa tertentu dapat mengatur kelas', 'Untuk menciptakan kerukunan, saling menghargai, dan mencegah konflik', 'Supaya pelajaran hanya membahas satu budaya', 'Agar perbedaan status terlihat jelas'], answer: 1 },
+          { q: 'Perilaku yang mencerminkan sila kelima Pancasila dalam kegiatan bakti sosial sekolah adalah...', options: ['Membagikan bantuan secara adil kepada warga yang membutuhkan tanpa pilih kasih', 'Memberikan bantuan hanya kepada kerabat panitia', 'Memilih penerima berdasarkan golongan tertentu', 'Menyimpan sebagian sumbangan untuk pribadi'], answer: 0 },
+          { q: '[Benar / Salah] Norma agama bersumber dari wahyu Tuhan Yang Maha Esa yang mengatur hubungan manusia dengan Tuhan dan sesama.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Ketika melihat teman membuang bungkus makanan sembarangan di taman sekolah, tindakan yang paling bijak adalah...', options: ['Membiarkannya karena bukan urusan kita', 'Mengingatkannya dengan sopan agar membuang sampah ke tempat sampah', 'Memindahkan sampah itu ke meja teman lain', 'Memarahinya di depan banyak siswa'], answer: 1 },
+          { q: 'Pancasila sebagai dasar negara berfungsi sebagai...', options: ['Alat pemisah antardaerah', 'Landasan utama dalam mengatur kehidupan bernegara dan menyusun peraturan', 'Pedoman yang hanya berlaku saat upacara bendera', 'Aturan yang berubah setiap bulan'], answer: 1 },
+          { q: '[Benar / Salah] Menghargai pendapat teman saat berdiskusi merupakan wujud pengamalan nilai kemanusiaan yang adil dan beradab.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Sikap cinta tanah air yang dapat ditunjukkan siswa kelas 6 dalam penggunaan produk dalam negeri adalah...', options: ['Bangga memakai perlengkapan sekolah buatan pengrajin lokal', 'Meremehkan karya kerajinan teman', 'Menolak mempelajari lagu daerah', 'Hanya mau membeli barang impor'], answer: 0 },
+          { q: 'Apabila seorang anak dipaksa bekerja sehingga tidak dapat bersekolah, maka hal tersebut merupakan...', options: ['Pemenuhan kewajiban anak', 'Pelanggaran hak anak untuk mendapatkan pendidikan dan tumbuh kembang', 'Penerapan musyawarah keluarga', 'Keseimbangan hak dan kewajiban'], answer: 1 },
+          { q: '[Benar / Salah] Tujuan utama diberlakukannya berbagai norma di masyarakat adalah menciptakan ketertiban, keamanan, dan keharmonisan bersama.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Dalam pemilihan ketua kelas, semua siswa diberi kesempatan yang sama untuk memilih dan dipilih. Prinsip yang tampak adalah...', options: ['Kesetaraan hak dan keterbukaan demokratis', 'Pengutamaan satu calon tertentu', 'Pembatasan hak bicara sebagian siswa', 'Penunjukan sepihak tanpa musyawarah'], answer: 0 },
+          { q: 'Contoh pengamalan sila kedua Pancasila di lingkungan keluarga adalah...', options: ['Menyayangi anggota keluarga dan membantu adik belajar dengan sabar', 'Mengabaikan nasihat orang tua', 'Memutuskan urusan bersama secara sepihak', 'Membeda-bedakan kasih sayang di rumah'], answer: 0 },
+          { q: '[Benar / Salah] Mematuhi tata tertib sekolah hanya diperlukan ketika ada guru atau petugas piket yang mengawasi.', options: ['Benar', 'Salah'], answer: 1 },
+          { q: 'Peran siswa dalam menjaga keutuhan NKRI di lingkungan sekolah dapat diwujudkan melalui...', options: ['Membentuk kelompok eksklusif berdasarkan daerah asal', 'Menjalin persaudaraan lintas budaya dan bekerja sama dalam kebersamaan', 'Menghindari kerja kelompok dengan teman baru', 'Mempermasalahkan perbedaan kebiasaan teman'], answer: 1 },
+          { q: 'Pernyataan yang paling tepat mengenai hubungan antara hak dan kewajiban adalah...', options: ['Hak selalu dituntut sebelum melaksanakan kewajiban apa pun', 'Kewajiban hanya berlaku bagi orang dewasa', 'Hak dan kewajiban berjalan seimbang dan saling melengkapi', 'Hak dapat dijalankan dengan merugikan orang lain'], answer: 2 },
+          { q: '[Benar / Salah] Menyaksikan dan mengapresiasi pertunjukan seni daerah lain merupakan salah satu cara melestarikan budaya bangsa.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Jika terjadi perselisihan kecil saat bermain olahraga di sekolah, penyelesaian yang mencerminkan sikap terpuji adalah...', options: ['Saling memaafkan dan kembali menaati aturan permainan', 'Mengajak teman lain memihak salah satu regu', 'Menghentikan permainan sambil marah', 'Menyalahkan wasit tanpa memeriksa aturan'], answer: 0 },
+          { q: 'Semboyan Bhinneka Tunggal Ika tertulis pada pita putih yang dicengkeram oleh...', options: ['Burung Garuda Pancasila', 'Perisai di dada Garuda', 'Bintang emas di tengah perisai', 'Pohon beringin pada lambang negara'], answer: 0 },
+          { q: '[Benar / Salah] Musyawarah untuk mufakat mengutamakan kepentingan bersama di atas kepentingan pribadi atau golongan.', options: ['Benar', 'Salah'], answer: 0 }
+        ],
+        essayQuestions: [
+          { q: 'Sikap mau menerima dan menghargai perbedaan keyakinan, suku, dan pendapat orang lain disebut...', hint: 'Toleransi' },
+          { q: 'Segala sesuatu yang mutlak menjadi milik kita dan penggunaannya bergantung kepada kita sendiri disebut...', hint: 'Hak' },
+          { q: 'Aturan atau ketentuan yang mengikat warga masyarakat dan menjadi panduan perilaku sehari-hari disebut...', hint: 'Norma' },
+          { q: 'Cara mengambil keputusan bersama dengan berunding untuk mencapai kesepakatan bersama disebut...', hint: 'Musyawarah' },
+          { q: 'Kerja sama yang dilakukan secara sukarela oleh warga masyarakat untuk kepentingan bersama disebut...', hint: 'Gotong royong' }
+        ]
+      },
+      {
+        id: 'bindo',
+        name: 'Bahasa Indonesia',
+        code: 'BI-06',
+        color: 'sky',
+        description: 'Ide pokok, kalimat efektif, majemuk bertingkat, fakta-opini, dan kosakata baku.',
+        pgQuestions: [
+          { q: 'Bacalah kalimat berikut: "Pengelola taman kota mengimbau pengunjung memilah sampah organik dan anorganik." Arti kata anorganik adalah...', options: ['Berasal dari makhluk hidup dan mudah membusuk', 'Bukan berasal dari makhluk hidup dan sulit terurai secara alami', 'Berupa cairan kimia berbahaya', 'Hanya berasal dari sisa makanan'], answer: 1 },
+          { q: 'Kalimat berikut yang menggunakan kata berimbuhan dengan makna melakukan tindakan aktif adalah...', options: ['Buku cerita itu dibaca adik sebelum tidur.', 'Raka menuliskan hasil wawancara ke dalam buku catatan.', 'Tanaman hias tersiram air hujan semalam.', 'Pintu perpustakaan terbuka sejak pagi.'], answer: 1 },
+          { q: '[Benar / Salah] Ide pokok suatu paragraf selalu terletak di kalimat terakhir saja.', options: ['Benar', 'Salah'], answer: 1 },
+          { q: '"Hutan mangrove menahan abrasi pantai sekaligus menjadi tempat berkembang biak ikan dan kepiting." Gagasan utama paragraf tersebut adalah...', options: ['Cara menanam pohon bakau di pesisir', 'Jenis ikan yang hidup di laut lepas', 'Peran penting hutan mangrove bagi lingkungan pesisir', 'Penyebab terjadinya abrasi musim hujan'], answer: 2 },
+          { q: 'Kalimat majemuk bertingkat yang menyatakan hubungan waktu adalah...', options: ['Dina rajin berlatih menulis agar tulisannya rapi.', 'Kami membawa payung karena langit mendung.', 'Ketika bel berbunyi, seluruh siswa masuk ke ruang kelas.', 'Ia tetap bersepeda meskipun gerimis turun.'], answer: 2 },
+          { q: '[Benar / Salah] Tanda koma (,) digunakan untuk memisahkan anak kalimat yang mendahului induk kalimat.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Perhatikan kalimat: "Hasil pengamatan pertumbuhan kacang hijau itu ... dalam laporan tertulis." Kata berimbuhan yang tepat adalah...', options: ['dipaparkan', 'memaparkan', 'pemaparan', 'terpapar'], answer: 0 },
+          { q: 'Dalam wawancara dengan pengrajin tenun, pertanyaan yang tepat untuk menggali proses pembuatan kain adalah...', options: ['"Berapa harga satu helai kain tenun ini?"', '"Bagaimana tahapan menyiapkan benang hingga ditenun menjadi kain?"', '"Di mana bapak membeli kain tenun?"', '"Siapa yang menjual kain tersebut?"'], answer: 1 },
+          { q: '[Benar / Salah] Fakta adalah pernyataan yang keadaannya dapat dibuktikan kebenarannya melalui data atau pengamatan nyata.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Kalimat berikut yang merupakan opini adalah...', options: ['Air mendidih pada suhu 100 derajat Celsius di tekanan normal.', 'Perpustakaan sekolah memiliki sekitar seribu judul buku.', 'Membaca buku di taman terasa jauh lebih menenangkan daripada di ruangan.', 'Upacara bendera dilaksanakan setiap hari Senin pagi.'], answer: 2 },
+          { q: 'Makna ungkapan "ringan tangan" dalam kalimat "Bima dikenal sebagai anak yang ringan tangan di kelas" adalah...', options: ['Tangannya ringan saat mengangkat benda', 'Suka membantu dan gemar menolong orang lain', 'Mudah marah kepada teman', 'Jarang bekerja sama dalam kelompok'], answer: 1 },
+          { q: '[Benar / Salah] Kata baku ditulis sesuai kaidah Kamus Besar Bahasa Indonesia (KBBI) dan digunakan dalam situasi resmi.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Kelompok kata berikut yang seluruhnya merupakan kata baku adalah...', options: ['apotek, kualitas, praktik, risiko', 'apotik, kwalitas, praktek, resiko', 'apotek, kwalitas, praktik, resiko', 'apotik, kualitas, praktek, risiko'], answer: 0 },
+          { q: 'Langkah pertama saat menyusun ringkasan dari sebuah teks bacaan adalah...', options: ['Mengubah seluruh nama tokoh cerita', 'Membaca teks secara keseluruhan untuk memahami isi pokoknya', 'Menghapus kalimat secara acak', 'Menambahkan opini pribadi di luar teks'], answer: 1 },
+          { q: '[Benar / Salah] Huruf kapital digunakan pada awal kalimat, huruf pertama nama orang, dan nama hari.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Bacalah kalimat: Ibu berkata, "Jangan lupa mengunci pintu sebelum tidur." Tanda baca pengapit petikan langsung adalah...', options: ['Tanda titik koma (;)', 'Tanda hubung (-)', 'Tanda petik ("...")', 'Tanda kurung ((...))'], answer: 2 },
+          { q: 'Sinonim kata "lestari" dalam kalimat "Warga berupaya menjaga kelestarian hutan desa" adalah...', options: ['Rusak', 'Kekal / tetap terjaga', 'Punah', 'Berkurang'], answer: 1 },
+          { q: '[Benar / Salah] Kalimat efektif harus hemat kata, jelas strukturnya, dan tidak mengulang kata bermakna sama.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Kalimat berikut yang termasuk kalimat efektif adalah...', options: ['Para siswa-siswa sedang berdiskusi di perpustakaan.', 'Sejak dari pagi hari tadi hujan turun deras.', 'Siswa kelas enam mengikuti kegiatan literasi setiap pagi.', 'Mereka saling berpandang-pandangan satu sama lain.'], answer: 2 },
+          { q: 'Antonim kata "transparan" dalam konteks keterbukaan informasi adalah...', options: ['Terbuka', 'Jelas', 'Tertutup', 'Jujur'], answer: 2 },
+          { q: '[Benar / Salah] Teks eksplanasi bertujuan menjelaskan proses terjadinya fenomena alam atau sosial secara runtut.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Dalam menulis pengumuman resmi sekolah, bahasa yang digunakan sebaiknya...', options: ['Bahasa gaul agar terdengar santai', 'Bahasa Indonesia yang santun, jelas, dan baku', 'Bahasa singkatan bebas', 'Bahasa yang bertele-tele'], answer: 1 },
+          { q: 'Perhatikan kalimat: "Pameran karya seni siswa akan diselenggarakan pada hari Jumat di aula sekolah." Keterangan tempatnya adalah...', options: ['Pameran karya seni siswa', 'akan diselenggarakan', 'pada hari Jumat', 'di aula sekolah'], answer: 3 },
+          { q: '[Benar / Salah] Kalimat tanya diakhiri tanda tanya (?) dan umumnya diawali kata tanya seperti apa, siapa, kapan, di mana, mengapa, atau bagaimana.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Makna imbuhan pe-an pada kata "penghijauan" adalah...', options: ['Alat untuk menghijaukan', 'Proses, cara, atau perbuatan menghijaukan', 'Orang yang menyukai warna hijau', 'Tempat tumbuhnya tanaman'], answer: 1 },
+          { q: 'Saat menyimak penjelasan narasumber dalam kegiatan kelas, sikap menyimak yang baik adalah...', options: ['Mencatat poin penting dan menyimak dengan saksama', 'Berbincang sendiri dengan teman', 'Memotong pembicaraan narasumber', 'Mengabaikan isi penjelasan'], answer: 0 },
+          { q: '[Benar / Salah] Paragraf yang padu memiliki satu gagasan pokok yang didukung beberapa kalimat penjelas berkaitan.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Kata penghubung yang tepat pada kalimat "Adi ingin ikut lomba lari, ... kakinya sedang cedera" adalah...', options: ['dan', 'atau', 'tetapi', 'sehingga'], answer: 2 },
+          { q: 'Tujuan utama membaca memindai (scanning) pada daftar jadwal atau kamus adalah...', options: ['Menikmati keindahan rima puisi', 'Menemukan informasi spesifik atau kata tertentu dengan cepat', 'Menghafal seluruh halaman buku', 'Menilai watak tokoh'], answer: 1 },
+          { q: '[Benar / Salah] Kata depan "di" yang menunjukkan tempat ditulis terpisah dari kata yang mengikutinya, seperti "di sekolah".', options: ['Benar', 'Salah'], answer: 0 }
+        ],
+        essayQuestions: [
+          { q: 'Gagasan utama yang menjadi dasar pengembangan sebuah paragraf disebut...', hint: 'Ide pokok / gagasan pokok' },
+          { q: 'Kata yang memiliki makna sama atau hampir sama dengan kata lain disebut...', hint: 'Sinonim' },
+          { q: 'Bentuk kata baku dari kata tidak baku "aktifitas" adalah...', hint: 'Aktivitas' },
+          { q: 'Tanda baca yang digunakan untuk mengakhiri kalimat berita adalah tanda...', hint: 'Titik (.)' },
+          { q: 'Orang yang memberikan informasi atau keterangan dalam sebuah wawancara disebut...', hint: 'Narasumber' }
+        ]
+      },
+      {
+        id: 'matematika',
+        name: 'Matematika',
+        code: 'MTK-06',
+        color: 'indigo',
+        description: 'Pecahan, desimal, operasi hitung campuran, volume bangun ruang, dan peluang.',
+        pgQuestions: [
+          { q: 'Hasil dari 3/4 + 2/5 adalah...', options: ['5/9', '23/20', '6/20', '17/20'], answer: 1 },
+          { q: 'Sebuah tali panjangnya 4 1/2 meter dipotong sepanjang 1 3/4 meter. Sisa panjang tali sekarang adalah...', options: ['2 3/4 meter', '3 1/4 meter', '2 1/4 meter', '3 3/4 meter'], answer: 0 },
+          { q: '[Benar / Salah] Pada operasi hitung campuran tanpa tanda kurung, perkalian dan pembagian dikerjakan sebelum penjumlahan dan pengurangan.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Nilai dari 2,45 + 1,6 adalah...', options: ['2,61', '3,05', '4,05', '4,15'], answer: 2 },
+          { q: 'Hasil dari 3,5 × 0,4 adalah...', options: ['0,14', '1,4', '14', '1,04'], answer: 1 },
+          { q: '[Benar / Salah] Pecahan 3/5 senilai dengan desimal 0,6 dan persen 60%.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Hasil dari 4/5 ÷ 2/3 adalah...', options: ['8/15', '6/5', '10/12', '12/10'], answer: 1 },
+          { q: 'Sebuah kotak berbentuk balok memiliki panjang 12 cm, lebar 8 cm, dan tinggi 5 cm. Volume kotak tersebut adalah...', options: ['100 cm³', '240 cm³', '480 cm³', '96 cm³'], answer: 2 },
+          { q: '[Benar / Salah] Sebuah kubus dengan panjang rusuk 6 cm memiliki volume 216 cm³.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Alas sebuah prisma segitiga berbentuk segitiga siku-siku dengan alas 6 cm dan tinggi segitiga 8 cm. Jika tinggi prisma 10 cm, volume prisma adalah...', options: ['240 cm³', '480 cm³', '140 cm³', '60 cm³'], answer: 0 },
+          { q: 'Urutan pecahan 0,75 ; 2/3 ; 65% dari yang terkecil ke terbesar adalah...', options: ['65% ; 2/3 ; 0,75', '2/3 ; 65% ; 0,75', '0,75 ; 2/3 ; 65%', '65% ; 0,75 ; 2/3'], answer: 0 },
+          { q: '[Benar / Salah] Hasil pembagian 6,3 ÷ 0,7 sama dengan 9.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Sebuah wadah berbentuk tabung memiliki luas alas 154 cm² dan tinggi 12 cm. Volume wadah tersebut adalah...', options: ['1.664 cm³', '1.848 cm³', '1.540 cm³', '1.248 cm³'], answer: 1 },
+          { q: 'Nilai dari 25 + 15 × 2 − 10 adalah...', options: ['70', '45', '55', '60'], answer: 1 },
+          { q: '[Benar / Salah] Jika sebuah dadu bersisi enam dilempar satu kali, peluang munculnya mata dadu genap adalah 3/6 atau 1/2.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Dalam kantong terdapat 4 kelereng merah, 5 kelereng biru, dan 3 kelereng hijau. Peluang terambilnya 1 kelereng merah secara acak adalah...', options: ['4/12', '5/12', '3/12', '4/8'], answer: 0 },
+          { q: 'Jarak dua kota pada peta adalah 4 cm dengan skala 1 : 500.000. Jarak sebenarnya kedua kota tersebut adalah...', options: ['2 km', '20 km', '200 km', '2.000 km'], answer: 1 },
+          { q: '[Benar / Salah] Bentuk paling sederhana dari perbandingan 18 : 24 adalah 3 : 4.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Ibu membeli 2,5 kg gula pasir lalu digunakan untuk membuat kue sebanyak 1,25 kg. Sisa gula pasir ibu adalah...', options: ['1,00 kg', '1,25 kg', '1,50 kg', '3,75 kg'], answer: 1 },
+          { q: 'Hasil dari 5/6 × 3/10 adalah...', options: ['15/60', '1/4', '8/16', '1/2'], answer: 1 },
+          { q: '[Benar / Salah] Volume bangun ruang diukur menggunakan satuan kubik seperti cm³ atau m³.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Sebuah limas segi empat memiliki luas alas 36 cm² dan tinggi 9 cm. Volume limas tersebut adalah...', options: ['324 cm³', '162 cm³', '108 cm³', '45 cm³'], answer: 2 },
+          { q: 'Nilai dari 8,2 − 3,75 adalah...', options: ['4,45', '4,55', '5,45', '5,55'], answer: 0 },
+          { q: '[Benar / Salah] Pada pelemparan satu koin setimbang, peluang muncul sisi angka sama dengan sisi gambar, yaitu 1/2.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Sebuah keranjang berisi 20 buah jeruk. Sebanyak 1/4 bagian diberikan kepada tetangga. Banyak jeruk yang diberikan adalah...', options: ['4 buah', '5 buah', '10 buah', '15 buah'], answer: 1 },
+          { q: 'Hasil dari (12 + 8) ÷ 4 + 3 × 2 adalah...', options: ['11', '16', '13', '14'], answer: 0 },
+          { q: '[Benar / Salah] Pecahan desimal 0,08 setara dengan pecahan biasa 8/10.', options: ['Benar', 'Salah'], answer: 1 },
+          { q: 'Akuarium balok berukuran panjang 50 cm, lebar 30 cm, tinggi 40 cm diisi air setinggi 20 cm. Volume air di dalamnya adalah...', options: ['60.000 cm³', '30.000 cm³', '15.000 cm³', '10.000 cm³'], answer: 1 },
+          { q: 'Bentuk persen dari pecahan 3/4 adalah...', options: ['25%', '50%', '75%', '80%'], answer: 2 },
+          { q: '[Benar / Salah] Nilai peluang suatu kejadian selalu berada di antara 0 sampai dengan 1.', options: ['Benar', 'Salah'], answer: 0 }
+        ],
+        essayQuestions: [
+          { q: 'Hasil penjumlahan pecahan 1/2 + 1/4 adalah...', hint: '3/4' },
+          { q: 'Sebuah kubus memiliki panjang rusuk 5 cm. Volume kubus tersebut adalah ... cm³.', hint: '125' },
+          { q: 'Bentuk pecahan desimal dari 1/2 adalah...', hint: '0,5' },
+          { q: 'Hasil operasi hitung dari 18 ÷ 3 + 4 × 2 adalah...', hint: '14' },
+          { q: 'Satu buah dadu bersisi enam dilempar satu kali. Banyak seluruh titik sampelnya adalah...', hint: '6' }
+        ]
+      },
+      {
+        id: 'ipas',
+        name: 'Ilmu Pengetahuan Alam & Sosial (IPAS)',
+        code: 'IPAS-06',
+        color: 'emerald',
+        description: 'Sistem gerak & saraf manusia, kondisi geografis & budaya Indonesia, serta tata surya.',
+        pgQuestions: [
+          { q: 'Rangka manusia berfungsi menopang tubuh dan melindungi organ vital. Tulang yang berfungsi melindungi otak adalah...', options: ['Tulang rusuk', 'Tulang tengkorak', 'Tulang paha', 'Tulang belikat'], answer: 1 },
+          { q: 'Sendi yang memungkinkan gerakan ke segala arah, seperti hubungan antara tulang lengan atas dan tulang belikat, disebut...', options: ['Sendi engsel', 'Sendi putar', 'Sendi peluru', 'Sendi geser'], answer: 2 },
+          { q: '[Benar / Salah] Otot bekerja secara aktif dengan cara berkontraksi dan berelaksasi untuk menggerakkan tulang.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Bagian utama sistem saraf pusat manusia yang memproses informasi dan mengendalikan keputusan tubuh adalah...', options: ['Otak', 'Lambung', 'Paru-paru', 'Ginjal'], answer: 0 },
+          { q: 'Cara menjaga kesehatan sistem gerak dan saraf pada usia sekolah adalah...', options: ['Duduk membungkuk dalam waktu lama', 'Tidur larut malam setiap hari', 'Berolahraga teratur, makan bergizi, dan menjaga postur tubuh', 'Mengangkat beban melebihi kemampuan'], answer: 2 },
+          { q: '[Benar / Salah] Sendi engsel hanya memungkinkan gerakan satu arah, seperti pada siku dan lutut.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Letak geografis Indonesia yang berada di antara dua benua dan dua samudra berpengaruh besar terhadap...', options: ['Terjadinya empat musim salju', 'Jalur perdagangan maritim internasional dan keragaman budaya', 'Hilangnya keanekaragaman hayati tropis', 'Tidak adanya angin muson'], answer: 1 },
+          { q: 'Contoh warisan budaya benda di Indonesia adalah...', options: ['Candi, rumah adat, dan senjata tradisional', 'Kebiasaan saling menyapa', 'Pantun dan cerita rakyat lisan', 'Ungkapan daerah'], answer: 0 },
+          { q: '[Benar / Salah] Melestarikan budaya daerah dapat dilakukan dengan mempelajari seni tradisional dan menghargai budaya daerah lain.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Aktivitas ekonomi masyarakat di daerah dataran tinggi yang sejuk umumnya bergerak di bidang...', options: ['Perkebunan teh, sayur-mayur, dan wisata alam', 'Penangkapan ikan laut dalam', 'Pertambangan lepas pantai', 'Industri galangan kapal'], answer: 0 },
+          { q: 'Faktor utama yang mendorong terjadinya interaksi dan perdagangan antarwilayah di Indonesia adalah...', options: ['Kesamaan penuh semua sumber daya alam', 'Perbedaan potensi sumber daya alam dan kebutuhan masyarakat', 'Larangan pengiriman barang antarprovinsi', 'Tidak adanya transportasi'], answer: 1 },
+          { q: '[Benar / Salah] Kebudayaan daerah merupakan bagian penting dari kekayaan kebudayaan nasional Indonesia.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Dalam sistem tata surya kita, benda langit yang menjadi pusat peredaran planet-planet adalah...', options: ['Bulan', 'Bumi', 'Matahari', 'Mars'], answer: 2 },
+          { q: 'Planet yang letaknya paling dekat dengan Matahari dan memiliki kala revolusi paling singkat adalah...', options: ['Venus', 'Merkurius', 'Jupiter', 'Saturnus'], answer: 1 },
+          { q: '[Benar / Salah] Planet Saturnus terkenal dengan sistem cincin megah yang tersusun atas partikel es, debu, dan batuan.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Perputaran Bumi pada porosnya (rotasi Bumi) mengakibatkan terjadinya...', options: ['Pergantian musim tahunan', 'Pergantian siang dan malam serta gerak semu harian Matahari', 'Perubahan rasi bintang setiap bulan', 'Gerhana bulan total setiap hari'], answer: 1 },
+          { q: 'Salah satu akibat dari peristiwa revolusi Bumi mengelilingi Matahari adalah...', options: ['Terjadinya siang dan malam', 'Perubahan penampakan rasi bintang dan variasi lamanya siang-malam', 'Terjadinya pasang surut harian', 'Berputarnya jarum kompas'], answer: 1 },
+          { q: '[Benar / Salah] Bulan tidak memancarkan cahayanya sendiri, melainkan memantulkan cahaya dari Matahari.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Benda langit yang mengorbit sebuah planet dan ikut mengelilingi Matahari bersama planet induknya disebut...', options: ['Asteroid', 'Komet', 'Satelit alami', 'Meteoroid'], answer: 2 },
+          { q: 'Sabuk asteroid utama dalam sistem tata surya terletak di antara orbit planet...', options: ['Merkurius dan Venus', 'Venus dan Bumi', 'Mars dan Jupiter', 'Jupiter dan Saturnus'], answer: 2 },
+          { q: '[Benar / Salah] Gerhana Matahari terjadi saat posisi Bulan berada di antara Matahari dan Bumi dalam satu garis lurus.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Planet terbesar dalam sistem tata surya kita adalah...', options: ['Uranus', 'Neptunus', 'Jupiter', 'Bumi'], answer: 2 },
+          { q: 'Pelaku ekonomi yang berperan menghasilkan barang atau jasa untuk memenuhi kebutuhan masyarakat disebut...', options: ['Konsumen', 'Produsen', 'Penabung', 'Pengamat'], answer: 1 },
+          { q: '[Benar / Salah] Perbedaan kondisi geografis antarwilayah memunculkan ragam mata pencaharian masyarakat di Indonesia.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Jaringan yang menghantarkan impuls listrik dari otak ke seluruh tubuh tersusun atas sel-sel yang disebut...', options: ['Sel darah merah', 'Sel saraf (neuron)', 'Sel epitel', 'Sel tulang rawan'], answer: 1 },
+          { q: 'Contoh kegiatan ekonomi kreatif yang memanfaatkan kekayaan budaya lokal adalah...', options: ['Pembuatan produk fesyen bermotif kain tenun tradisional', 'Menebang hutan secara liar', 'Membuang limbah ke sungai', 'Membakar sampah plastik'], answer: 0 },
+          { q: '[Benar / Salah] Bumi merupakan planet ketiga dari Matahari yang memiliki atmosfer dan air cair yang mendukung kehidupan.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Gerakan memutar pada leher yang memungkinkan kepala menengok ke kiri dan kanan dibantu oleh...', options: ['Sendi putar', 'Sendi engsel', 'Sendi peluru', 'Sendi kaku'], answer: 0 },
+          { q: 'Ketika komet mendekati Matahari, panas Matahari menguapkan es dan gasnya sehingga membentuk...', options: ['Kawah yang dalam', 'Koma dan ekor bercahaya yang menjauhi Matahari', 'Cincin batu permanen', 'Satelit baru'], answer: 1 },
+          { q: '[Benar / Salah] Menjaga kelestarian lingkungan dan budaya lokal merupakan tanggung jawab bersama seluruh warga.', options: ['Benar', 'Salah'], answer: 0 }
+        ],
+        essayQuestions: [
+          { q: 'Hubungan antartulang yang memungkinkan terjadinya pergerakan pada tubuh manusia disebut...', hint: 'Sendi' },
+          { q: 'Perputaran Bumi mengelilingi porosnya sendiri disebut ... Bumi.', hint: 'Rotasi' },
+          { q: 'Planet ketujuh dari Matahari yang berwarna biru kehijauan dan sumbu rotasinya miring adalah...', hint: 'Uranus' },
+          { q: 'Kegiatan memakai atau menghabiskan nilai guna barang atau jasa untuk memenuhi kebutuhan disebut...', hint: 'Konsumsi' },
+          { q: 'Satu-satunya satelit alami yang mengorbit Bumi adalah...', hint: 'Bulan' }
+        ]
+      },
+      {
+        id: 'seni',
+        name: 'Seni Budaya',
+        code: 'SB-06',
+        color: 'amber',
+        description: 'Unsur & prinsip seni rupa, tempo & dinamika musik, pola lantai tari, serta teater.',
+        pgQuestions: [
+          { q: 'Dalam seni rupa, unsur yang terbentuk dari perpaduan titik-titik memanjang dengan arah tertentu disebut...', options: ['Garis', 'Tekstur', 'Ruang', 'Gelap terang'], answer: 0 },
+          { q: 'Prinsip seni rupa yang mengatur unsur karya agar tampak stabil, selaras, dan tidak berat sebelah disebut...', options: ['Keseimbangan (balance)', 'Kebisingan', 'Kerumitan', 'Ketidakaturan'], answer: 0 },
+          { q: '[Benar / Salah] Warna primer dalam teori warna pigmen terdiri atas merah, kuning, dan biru.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Pencampuran warna primer kuning dan biru akan menghasilkan warna sekunder, yaitu...', options: ['Ungu', 'Hijau', 'Jingga', 'Cokelat'], answer: 1 },
+          { q: 'Kesan rabaan suatu permukaan benda, baik kasar maupun halus, dalam seni rupa disebut...', options: ['Tekstur', 'Ritme', 'Proporsi', 'Titik'], answer: 0 },
+          { q: '[Benar / Salah] Karya seni rupa dua dimensi hanya memiliki ukuran panjang dan lebar sehingga dinikmati dari satu arah depan.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Dalam pertunjukan seni musik atau tari, ukuran cepat atau lambatnya kecepatan lagu disebut...', options: ['Tempo', 'Dinamika', 'Birama', 'Tangga nada'], answer: 0 },
+          { q: 'Keras lembutnya suara yang dimainkan dalam sebuah lagu untuk membangun suasana disebut...', options: ['Dinamika', 'Irama', 'Melodi', 'Harmoni'], answer: 0 },
+          { q: '[Benar / Salah] Menyanyi secara berkelompok dengan membagi suara menjadi beberapa bagian selaras disebut paduan suara atau vokal grup.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Alat musik ritmis berfungsi mengatur ketukan dalam lagu. Contoh alat musik ritmis adalah...', options: ['Gitar dan biola', 'Seruling dan pianika', 'Kendang dan tamborin', 'Saxophone dan terompet'], answer: 2 },
+          { q: 'Dalam seni tari, yang dimaksud dengan pola lantai adalah...', options: ['Pakaian yang dikenakan penari', 'Garis atau jalur formasi yang dilalui penari di atas pentas', 'Lampu sorot panggung', 'Musik pembuka tarian'], answer: 1 },
+          { q: '[Benar / Salah] Pola lantai lurus vertikal, diagonal, dan melingkar merupakan contoh pola lantai dalam seni tari.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Benda pelengkap yang dimainkan penari untuk memperkuat makna gerak, seperti kipas atau selendang, disebut...', options: ['Properti tari', 'Tata rias', 'Naskah drama', 'Panggung'], answer: 0 },
+          { q: 'Dalam seni teater, tokoh yang berperan menentang atau berkonflik dengan tokoh protagonis disebut...', options: ['Antagonis', 'Figuran', 'Sutradara', 'Penonton'], answer: 0 },
+          { q: '[Benar / Salah] Latihan olah vokal dan olah tubuh penting dilakukan sebelum pementasan teater agar dialog terdengar jelas.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Gambar yang dibuat untuk memperjelas atau menerangkan isi cerita maupun bacaan disebut...', options: ['Gambar ilustrasi', 'Peta buta', 'Grafik batang', 'Denah lokasi'], answer: 0 },
+          { q: 'Komposisi menggambar yang menempatkan objek di tengah dengan sisi kanan dan kiri seimbang disebut komposisi...', options: ['Simetris', 'Asimetris', 'Abstrak', 'Acak'], answer: 0 },
+          { q: '[Benar / Salah] Mengapresiasi karya seni teman sebaiknya dilakukan dengan tanggapan yang santun dan membangun.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Pengulangan unsur rupa secara teratur sehingga menimbulkan kesan gerak alur pandangan disebut...', options: ['Irama (ritme)', 'Keheningan', 'Kekosongan', 'Kesalahan'], answer: 0 },
+          { q: 'Ketika menyanyikan lagu wajib nasional secara berkelompok, sikap tubuh yang tepat adalah...', options: ['Berdiri tegak namun rileks, mengatur pernapasan, dan artikulasi jelas', 'Berbaring santai agar tidak lelah', 'Menutup mulut saat bernyanyi', 'Berteriak sekencang-kencangnya'], answer: 0 },
+          { q: '[Benar / Salah] Karya seni kriya dapat dibuat dari bahan alam seperti bambu dan tanah liat maupun bahan daur ulang.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Perbedaan utama karya seni rupa tiga dimensi dibandingkan dua dimensi adalah adanya unsur...', options: ['Volume atau kedalaman (panjang, lebar, tinggi)', 'Warna saja', 'Judul tulisan', 'Garis tepi'], answer: 0 },
+          { q: 'Dalam pertunjukan tari kelompok, kekompakan antarpenari sangat ditentukan oleh...', options: ['Kesamaan hitungan, ketepatan iringan musik, dan penguasaan pola lantai', 'Gerak sendiri tanpa memperhatikan teman', 'Mengubah gerakan mendadak', 'Mengabaikan aba-aba kelompok'], answer: 0 },
+          { q: '[Benar / Salah] Ekspresi mimik wajah dalam teater membantu menyampaikan emosi tokoh kepada penonton.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Tanda tempo allegro pada partitur lagu menunjukkan bahwa lagu dinyanyikan dengan kecepatan...', options: ['Cepat dan riang', 'Sangat lambat dan sedih', 'Berhenti total', 'Semakin pelan'], answer: 0 },
+          { q: 'Langkah awal sebelum membuat karya seni rupa bertema lingkungan sekolah adalah...', options: ['Menentukan ide, membuat sketsa, dan menyiapkan alat bahan', 'Langsung mewarnai tanpa rancangan', 'Membuang bahan sebelum bekerja', 'Meniru karya teman tanpa izin'], answer: 0 },
+          { q: '[Benar / Salah] Kerja sama tim diperlukan dalam pementasan seni agar tata panggung, musik, dan penampilan berjalan harmonis.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Percakapan antartokoh dalam naskah drama atau teater disebut...', options: ['Dialog', 'Sinopsis', 'Properti', 'Latar'], answer: 0 },
+          { q: 'Pencampuran warna primer merah dan kuning menghasilkan warna...', options: ['Jingga (oranye)', 'Hijau', 'Ungu', 'Hitam'], answer: 0 },
+          { q: '[Benar / Salah] Pameran karya seni di kelas bertujuan menampilkan hasil karya siswa sekaligus melatih apresiasi seni.', options: ['Benar', 'Salah'], answer: 0 }
+        ],
+        essayQuestions: [
+          { q: 'Rancangan awal berupa goresan tipis sebelum menyempurnakan gambar atau lukisan disebut...', hint: 'Sketsa' },
+          { q: 'Alat musik yang dapat menghasilkan rangkaian nada-nada tertentu disebut alat musik...', hint: 'Melodis' },
+          { q: 'Jalur atau garis formasi gerak yang dibentuk penari di atas lantai pentas disebut...', hint: 'Pola lantai' },
+          { q: 'Orang yang mengatur jalannya pementasan dan mengarahkan para pemain teater disebut...', hint: 'Sutradara' },
+          { q: 'Keselarasan dan kesatuan susunan unsur-unsur dalam sebuah karya seni disebut...', hint: 'Harmoni / komposisi' }
+        ]
+      },
+      {
+        id: 'inggris',
+        name: 'Bahasa Inggris (English)',
+        code: 'ENG-06',
+        color: 'violet',
+        description: 'Simple past tense, adverbs of frequency, daily routines, and polite expressions.',
+        pgQuestions: [
+          { q: 'Read the sentence: "Dina always waters the plants in the garden every morning." The word "always" shows...', options: ['A place in the school', 'How often an activity happens (frequency)', 'A past event', 'A type of fruit'], answer: 1 },
+          { q: 'Yesterday, Budi ... to the museum with his classmates.', options: ['go', 'goes', 'went', 'going'], answer: 2 },
+          { q: '[Benar / Salah] In the simple past tense, the verb "play" changes into "played" to describe a completed action in the past.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Which sentence correctly uses the simple past tense?', options: ['We clean our classroom every Friday morning.', 'Sita visited her grandmother last Sunday.', 'They are reading storybooks right now.', 'He will buy a new ruler tomorrow.'], answer: 1 },
+          { q: 'Look at the time expression: "two days ago". It is commonly used to talk about...', options: ['Future plans', 'Past activities', 'Daily habits', 'General facts'], answer: 1 },
+          { q: '[Benar / Salah] The negative form of "She bought a dictionary yesterday" is "She did not buy a dictionary yesterday."', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'A: "... did you go last holiday?" — B: "I went to Bandung with my family."', options: ['Who', 'Where', 'What time', 'How many'], answer: 1 },
+          { q: 'Which word is a regular verb in past tense?', options: ['ate', 'saw', 'studied', 'took'], answer: 2 },
+          { q: '[Benar / Salah] "Did you finish your homework last night?" is a correct past-tense yes/no question.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Rani ... a delicious fried rice for breakfast this morning.', options: ['eat', 'eats', 'ate', 'eating'], answer: 2 },
+          { q: 'What is the polite way to ask for help in English?', options: ['"Give me that book now!"', '"Could you please help me carry these books?"', '"I don\'t want to help."', '"Where is your bag?"'], answer: 1 },
+          { q: '[Benar / Salah] Adverbs of frequency such as "usually", "sometimes", and "never" help us describe habits and routines.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'My brother ... never late for school because he wakes up early.', options: ['is', 'are', 'were', 'be'], answer: 0 },
+          { q: 'Read: "Last Saturday, sixth-grade students planted fifty tree seedlings around the school yard." How many seedlings did they plant?', options: ['Fifteen', 'Fifty', 'Five', 'Sixty'], answer: 1 },
+          { q: '[Benar / Salah] In English, days of the week (Monday, Friday) and months (January, December) always start with a capital letter.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Which sentence expresses a daily routine?', options: ['Anton brushes his teeth before going to bed.', 'Anton broke his pencil two hours ago.', 'Anton watched a movie last night.', 'Anton wrote a letter yesterday.'], answer: 0 },
+          { q: 'The past form of the irregular verb "write" is...', options: ['writed', 'wrote', 'written', 'writing'], answer: 1 },
+          { q: '[Benar / Salah] "How much" is used for uncountable nouns or prices, while "How many" is used for countable plural nouns.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: '"... apples are there in the basket?" — "There are twelve apples."', options: ['How much', 'How many', 'How long', 'How old'], answer: 1 },
+          { q: 'When someone says "Thank you for lending me your umbrella," the appropriate response is...', options: ['"You\'re welcome."', '"Good night."', '"I\'m sorry."', '"See you next year."'], answer: 0 },
+          { q: '[Benar / Salah] The word "never" means zero percent (0%) of the time.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Read: "The students listened carefully to the teacher\'s explanation." The word "carefully" tells us...', options: ['How the students listened', 'Where the teacher lives', 'When the class ended', 'Who brought the book'], answer: 0 },
+          { q: 'Which pair shows the correct present and past form?', options: ['read – readed', 'see – saw', 'run – runned', 'make – maked'], answer: 1 },
+          { q: '[Benar / Salah] "Last week" refers to a time that has already passed.', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'A: "What did you do yesterday afternoon?" — B: "I ... my room and read a comic."', options: ['tidy', 'tidied', 'tidying', 'tides'], answer: 1 },
+          { q: 'To ask for permission politely in class, you can say...', options: ['"May I go to the restroom, please?"', '"Open the window now!"', '"This is not my book."', '"I forgot my name."'], answer: 0 },
+          { q: '[Benar / Salah] In "They didn\'t play football yesterday," the main verb after "didn\'t" stays in its base form ("play").', options: ['Benar', 'Salah'], answer: 0 },
+          { q: 'Which word means the opposite of "always" in terms of frequency?', options: ['Often', 'Usually', 'Never', 'Sometimes'], answer: 2 },
+          { q: 'Complete the sentence: "We ... a science project at school last month."', options: ['do', 'does', 'did', 'doing'], answer: 2 },
+          { q: '[Benar / Salah] Reading English short stories helps sixth-grade students learn new vocabulary and sentence patterns.', options: ['Benar', 'Salah'], answer: 0 }
+        ],
+        essayQuestions: [
+          { q: 'The past tense form of the irregular verb "go" is...', hint: 'went' },
+          { q: 'An adverb of frequency that means "tidak pernah" in English is...', hint: 'never' },
+          { q: 'Yesterday, I ... (visit) the school library to borrow two books. Write the past verb:', hint: 'visited' },
+          { q: 'Question word used to ask about a place or location is...', hint: 'where' },
+          { q: 'The past tense form of the irregular verb "see" is...', hint: 'saw' }
+        ]
+      }      ,
+      {
+        id: 'pai',
+        name: 'Pendidikan Agama Islam & Budi Pekerti',
+        code: 'PAI-06',
+        color: 'teal',
+        description: 'QS. Ad-Duha, Asmaul Husna (Al-Ghaffar, Al-Afuw, Al-Wahid, Al-Qahhar), takdir, berbakti kepada orang tua & guru, zakat/infak/sedekah, serta Khulafaur Rasyidin.',
+        pgQuestions: [
+          { q: "Surah Ad-Duha terdiri atas berapa ayat dan tergolong surah apa?", options: ["11 ayat, Makkiyah", "10 ayat, Madaniyah", "12 ayat, Makkiyah", "9 ayat, Madaniyah"], answer: 0 },
+          { q: "Arti dari nama surah 'Ad-Duha' adalah...", options: ["Waktu fajar menyingsing", "Waktu matahari sepenggalahan naik (dhuha)", "Waktu malam yang sunyi", "Waktu terbenam matahari"], answer: 1 },
+          { q: "[Benar / Salah] Dalam surah Ad-Duha, Allah SWT menegaskan bahwa Dia tidak pernah meninggalkan dan membenci Nabi Muhammad SAW.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Sikap yang diperintahkan dalam surah Ad-Duha terhadap anak yatim adalah...", options: ["Mengabaikan kebutuhannya", "Berlaku sewenang-wenang", "Tidak menindas dan menyayanginya", "Menyerahkan seluruhnya kepada orang lain"], answer: 2 },
+          { q: "Perintah Allah SWT dalam surah Ad-Duha apabila ada peminta-minta datang adalah...", options: ["Membentaknya dengan keras", "Tidak menghardiknya", "Menutup pintu rumah", "Mengusirnya secara halus"], answer: 1 },
+          { q: "[Benar / Salah] Menyebut-nyebut nikmat Allah SWT dengan penuh rasa syukur merupakan salah satu pesan pokok surah Ad-Duha.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Salah satu Asmaul Husna adalah Al-Ghaffar yang artinya...", options: ["Maha Mengetahui", "Maha Pengampun", "Maha Esa", "Maha Kuasa"], answer: 1 },
+          { q: "Makna Asmaul Husna Al-'Afuw adalah...", options: ["Maha Pemaaf yang menghapus bekas dosa", "Maha Pencipta seluruh alam", "Maha Mendengar segala bisikan", "Maha Pemberi rezeki"], answer: 0 },
+          { q: "[Benar / Salah] Asmaul Husna Al-Wahid menunjukkan bahwa Allah SWT Maha Esa dalam zat, sifat, dan perbuatan-Nya.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Asmaul Husna Al-Qahhar mengandung arti bahwa Allah SWT...", options: ["Maha Penyayang kepada makhluk", "Maha Perkasa dan Maha Menundukkan segala sesuatu", "Maha Bijaksana dalam menetapkan hukum", "Maha Halus dan Teliti"], answer: 1 },
+          { q: "Sikap yang mencerminkan keyakinan terhadap Asmaul Husna Al-'Afuw dalam kehidupan sehari-hari adalah...", options: ["Menyimpan dendam kepada teman", "Mudah memaafkan kesalahan orang lain dan bertaubat kepada Allah", "Merasa paling benar sendiri", "Menunda-nunda kebaikan"], answer: 1 },
+          { q: "[Benar / Salah] Mengimani Asmaul Husna Al-Ghaffar mendorong seseorang untuk tidak berputus asa dari rahmat Allah dan terus memperbaiki diri.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Takdir yang ketentuannya sudah pasti dari Allah SWT dan tidak dapat diubah oleh usaha manusia disebut...", options: ["Takdir muallaq", "Takdir mubram", "Sunnatullah", "Ikhtiar"], answer: 1 },
+          { q: "Contoh peristiwa yang termasuk takdir mubram adalah...", options: ["Kepandaian meraih prestasi belajar", "Kesehatan tubuh akibat olahraga teratur", "Jenis kelamin, kematian, dan pergantian siang-malam", "Keberhasilan menjadi pengusaha"], answer: 2 },
+          { q: "[Benar / Salah] Takdir muallaq adalah ketentuan Allah SWT yang berkaitan dengan ikhtiar atau usaha manusia.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Usaha sungguh-sungguh yang dilakukan manusia untuk mencapai cita-cita dan ridha Allah SWT disebut...", options: ["Tawakal", "Ikhtiar", "Qana'ah", "Istiqamah"], answer: 1 },
+          { q: "Sikap menyerahkan hasil usaha sepenuhnya kepada Allah SWT setelah berusaha dengan maksimal disebut...", options: ["Tawakal", "Pasrah tanpa usaha", "Sombong", "Riya"], answer: 0 },
+          { q: "[Benar / Salah] Beriman kepada qada dan qadar menumbuhkan sikap optimis, tidak mudah putus asa, dan rendah hati.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Perilaku terpuji menghormati dan memuliakan orang tua serta guru dalam ajaran Islam disebut...", options: ["Birrul walidain dan takzim kepada guru", "Su'uzan", "Ghibah", "Israf"], answer: 1 },
+          { q: "Cara berbakti kepada orang tua yang sudah meninggal dunia antara lain adalah...", options: ["Melupakan jasa-jasanya", "Mendoakannya, melunasi tanggungan haknya jika ada, dan menyambung silaturahmi dengan sahabatnya", "Mengabaikan saudara kandung", "Menghabiskan harta warisan tanpa musyawarah"], answer: 1 },
+          { q: "[Benar / Salah] Menyimak nasihat guru dengan sopan dan mengerjakan tugas dengan sungguh-sungguh merupakan bentuk menghormati guru.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Dalam hukum Islam, zakat yang wajib dikeluarkan oleh setiap muslim menjelang Hari Raya Idulfitri berupa makanan pokok disebut...", options: ["Zakat mal", "Zakat fitrah", "Sedekah jariyah", "Wakaf"], answer: 1 },
+          { q: "Zakat yang dikeluarkan atas harta kekayaan yang dimiliki dan telah mencapai nisab serta haul disebut...", options: ["Zakat fitrah", "Zakat mal", "Infak sunah", "Hibah"], answer: 1 },
+          { q: "[Benar / Salah] Infak adalah mengeluarkan sebagian harta di jalan Allah SWT di luar zakat wajib, baik saat lapang maupun sempit.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Amalan yang pahalanya terus mengalir meskipun seseorang telah meninggal dunia, seperti ilmu yang bermanfaat dan sedekah jariyah, disebut...", options: ["Sedekah jariyah / amal jariyah", "Nazar", "Kafarat", "Hadiah"], answer: 0 },
+          { q: "Kelompok penerima zakat (mustahik) yang berhak menerima zakat antara lain adalah...", options: ["Fakir, miskin, dan amil zakat", "Orang kaya yang berkecukupan", "Pejabat daerah", "Pedagang yang untung besar"], answer: 0 },
+          { q: "[Benar / Salah] Mengeluarkan zakat, infak, dan sedekah membantu membersihkan harta sekaligus menumbuhkan kepedulian sosial kepada sesama.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Khulafaur Rasyidin yang pertama setelah wafatnya Nabi Muhammad SAW dan dikenal karena kesetiaannya membenarkan peristiwa Isra Mikraj adalah...", options: ["Umar bin Khattab RA", "Abu Bakar Ash-Siddiq RA", "Utsman bin Affan RA", "Ali bin Abi Thalib RA"], answer: 1 },
+          { q: "Khulafaur Rasyidin yang dijuluki 'Al-Faruq' (pembeda antara yang hak dan batil) serta menyusun kalender Hijriah adalah...", options: ["Abu Bakar Ash-Siddiq RA", "Umar bin Khattab RA", "Utsman bin Affan RA", "Ali bin Abi Thalib RA"], answer: 1 },
+          { q: "[Benar / Salah] Utsman bin Affan RA berjasa dalam membukukan mushaf Al-Qur'an standar agar bacaan umat Islam seragam, sedangkan Ali bin Abi Thalib RA dikenal dengan kecerdasan dan keteladanannya.", options: ["Benar", "Salah"], answer: 0 }
+        ],
+        essayQuestions: [
+          { q: "Surah pendek dalam Al-Qur'an yang artinya 'Waktu Dhuha' dan mengajarkan kasih sayang kepada anak yatim adalah surah...", hint: "Ad-Duha" },
+          { q: "Asmaul Husna yang berarti 'Maha Pemaaf' adalah...", hint: "Al-'Afuw / Al-Afuw" },
+          { q: "Ketentuan Allah SWT yang sejak zaman azali dan tidak dapat diubah oleh usaha manusia disebut takdir...", hint: "Mubram" },
+          { q: "Zakat yang wajib ditunaikan setiap muslim menjelang Idulfitri untuk menyucikan diri disebut zakat...", hint: "Fitrah" },
+          { q: "Pemimpin pengganti Rasulullah SAW yang berjumlah empat orang dan dikenal sebagai Khulafaur Rasyidin pertama adalah...", hint: "Abu Bakar Ash-Siddiq" }
+        ]
+      },
+      {
+        id: 'pjok',
+        name: 'Pendidikan Jasmani, Olahraga, dan Kesehatan (PJOK)',
+        code: 'PJOK-06',
+        color: 'cyan',
+        description: 'Permainan bola besar (basket, voli, sepak bola), atletik (lari jarak pendek & lompat jauh), kebugaran jasmani, senam lantai, pencak silat, gerak berirama, dan pola hidup sehat.',
+        pgQuestions: [
+          { q: "Dalam permainan bola basket, mengoper bola jarak pendek dengan memantulkannya ke lantai terlebih dahulu menuju rekan setim disebut...", options: ["Chest pass", "Bounce pass", "Overhead pass", "Baseball pass"], answer: 1 },
+          { q: "Teknik menggiring bola (dribbling) dalam bola basket yang efektif digunakan saat berlari cepat tanpa tekanan lawan adalah...", options: ["Dribbling tinggi", "Dribbling rendah", "Pivot", "Lay-up"], answer: 0 },
+          { q: "[Benar / Salah] Dalam permainan bola voli, passing bawah dilakukan dengan merapatkan dan meluruskan kedua lengan serta perkenaan bola pada bagian lengan bawah.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Pukulan permulaan untuk memulai permainan bola voli dari belakang garis lapangan disebut...", options: ["Smash / spike", "Blocking", "Servis", "Passing atas"], answer: 2 },
+          { q: "Gerakan menghentikan atau menahan serangan smash lawan di dekat net dalam permainan bola voli disebut...", options: ["Blocking / bendungan", "Servis bawah", "Tosser", "Libero"], answer: 0 },
+          { q: "[Benar / Salah] Dalam sepak bola, menendang bola dengan kaki bagian dalam cocok digunakan untuk mengoper bola jarak pendek dengan akurasi yang baik.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Bagian kepala yang tepat digunakan untuk menyundul bola (heading) dalam sepak bola adalah...", options: ["Ubun-ubun", "Dahi / kening", "Bagian belakang kepala", "Pelipis"], answer: 1 },
+          { q: "Dalam atletik nomor lari jarak pendek (sprint), start yang digunakan pelari adalah...", options: ["Start berdiri", "Start melayang", "Start jongkok", "Start duduk"], answer: 2 },
+          { q: "[Benar / Salah] Pada aba-aba 'Bersedia' dalam start jongkok, lutut kaki belakang menempel di tanah dan kedua tangan bertumpu di belakang garis start selebar bahu.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Teknik memasuki garis finis lari jarak pendek yang benar agar catatan waktu optimal adalah...", options: ["Melompat tinggi sebelum garis finis", "Mengurangi kecepatan 5 meter sebelum garis finis", "Berlari secepat mungkin melewati garis finis dan mencondongkan dada ke depan", "Berhenti tepat di atas garis finis"], answer: 2 },
+          { q: "Dalam olahraga lompat jauh, tolakan pada papan tolakan dilakukan menggunakan...", options: ["Satu kaki terkuat", "Kedua kaki bersamaan sambil berlari", "Tumit kaki belakang", "Tangan sebagai tumpuan"], answer: 0 },
+          { q: "[Benar / Salah] Sikap mendarat pada lompat jauh yang aman adalah mendarat dengan kedua kaki mengeper dan badan condong ke depan.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Komponen kebugaran jasmani yang berkaitan dengan kemampuan otot melakukan kontraksi dalam waktu lama tanpa kelelahan berarti adalah...", options: ["Daya tahan otot", "Kecepatan reaksi", "Kelenturan sendi", "Keseimbangan statis"], answer: 0 },
+          { q: "Latihan sit-up secara teratur terutama melatih kekuatan dan daya tahan otot...", options: ["Betis", "Perut", "Leher", "Jari tangan"], answer: 1 },
+          { q: "[Benar / Salah] Pemanasan sebelum berolahraga berfungsi menyiapkan otot, meningkatkan suhu tubuh, dan mengurangi risiko cedera.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Latihan push-up bermanfaat utama untuk melatih kekuatan otot...", options: ["Lengan, bahu, dan dada", "Paha bagian belakang saja", "Pergelangan kaki", "Leher dan pipi"], answer: 0 },
+          { q: "Kemampuan tubuh mempertahankan posisi atau sikap tubuh baik dalam keadaan diam maupun bergerak disebut...", options: ["Keseimbangan", "Kelincahan", "Koordinasi", "Daya ledak"], answer: 0 },
+          { q: "[Benar / Salah] Pendinginan (cooling down) setelah berolahraga membantu menurunkan detak jantung secara bertahap dan melemaskan otot yang tegang.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Dalam senam lantai, gerakan berguling ke depan dengan bertumpu pada tengkuk dan punggung secara berurutan disebut...", options: ["Guling depan (roll depan)", "Sikap lilin", "Kayang", "Handstand"], answer: 0 },
+          { q: "Sikap awal guling depan yang benar adalah...", options: ["Berdiri tegak membelakangi matras", "Jongkok menghadap matras, kedua telapak tangan bertumpu pada matras, dan dagu menempel di dada", "Berbaring telentang di tepi matras", "Duduk bersila di tengah matras"], answer: 1 },
+          { q: "[Benar / Salah] Dalam pencak silat, tangkisan berfungsi menahan atau membendung serangan pukulan maupun tendangan lawan.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Posisi kaki yang kokoh sebagai dasar tumpuan untuk melakukan serangan maupun pembelaan dalam pencak silat disebut...", options: ["Kuda-kuda", "Elakan", "Tangkisan", "Kuncian"], answer: 0 },
+          { q: "Gerakan memindahkan badan agar terhindar dari serangan lawan tanpa kontak fisik langsung dalam pencak silat disebut...", options: ["Elakan", "Pukulan lurus", "Tendangan sabit", "Sapu"], answer: 0 },
+          { q: "[Benar / Salah] Gerak berirama (senam irama) menekankan keserasian gerak dengan iringan musik atau hitungan.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Langkah kaki biasa dalam aktivitas gerak berirama diawali dengan melangkahkan...", options: ["Kaki kiri atau kanan dengan lutut sedikit mengeper mengikuti irama", "Kedua kaki melompat tinggi secara bersamaan", "Lutut berbenturan keras", "Badan membungkuk kaku"], answer: 0 },
+          { q: "Salah satu manfaat menjaga kebersihan dan kesehatan diri bagi pelajar adalah...", options: ["Tubuh mudah terserang penyakit menular", "Tubuh tetap bugar, sehat, dan siap belajar dengan konsentrasi baik", "Mudah lelah saat beraktivitas", "Mengabaikan waktu istirahat"], answer: 1 },
+          { q: "[Benar / Salah] Tidur yang cukup, minum air putih yang bersih, serta mencuci tangan dengan sabun merupakan kebiasaan hidup sehat.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Sikap sportif dalam setiap permainan atau pertandingan olahraga ditunjukkan dengan...", options: ["Menerima kekalahan dengan lapang dada dan tidak berbuat curang", "Memprotes wasit secara berlebihan", "Mengejek lawan yang kalah", "Melanggar aturan saat tidak dilihat"], answer: 0 },
+          { q: "Dalam permainan bola tangan atau bola basket, gerakan memutar satu kaki sebagai poros sementara kaki lainnya melangkah disebut...", options: ["Pivot", "Jump shot", "Rebound", "Block"], answer: 0 },
+          { q: "[Benar / Salah] Menggunakan perlengkapan olahraga sesuai ukuran dan mematuhi instruksi guru membantu menjaga keselamatan saat berolahraga.", options: ["Benar", "Salah"], answer: 0 }
+        ],
+        essayQuestions: [
+          { q: "Teknik mengoper bola basket dengan memantulkannya ke lantai terlebih dahulu disebut ... pass.", hint: "Bounce" },
+          { q: "Sikap dasar tumpuan kaki yang kokoh dalam pencak silat untuk menyerang atau bertahan disebut...", hint: "Kuda-kuda" },
+          { q: "Rangkaian gerak senam lantai dengan menggulingkan badan ke depan melalui tengkuk disebut guling...", hint: "Depan" },
+          { q: "Kemampuan tubuh untuk melakukan aktivitas fisik dalam waktu yang relatif lama tanpa mengalami kelelahan yang berarti disebut daya...", hint: "Tahan" },
+          { q: "Tahap gerakan setelah berolahraga untuk menenangkan tubuh dan melemaskan otot disebut...", hint: "Pendinginan" }
+        ]
+      },
+      {
+        id: 'mulok',
+        name: 'Muatan Lokal Bahasa Daerah Dompu',
+        code: 'MLK-DOM-06',
+        color: 'lime',
+        description: 'Nggahi Mbojo / Bahasa Dompu, kosakata & sapaan sehari-hari, bilangan, ungkapan adat Nggahi Rawi Pahu, serta pelestarian budaya lokal Dompu.',
+        pgQuestions: [
+          { q: "Bahasa daerah yang digunakan secara turun-temurun oleh masyarakat Kabupaten Dompu dalam kehidupan sehari-hari disebut...", options: ["Nggahi Mbojo (Bahasa Dompu/Bima)", "Bahasa Sasak", "Bahasa Bugis", "Bahasa Bali"], answer: 0 },
+          { q: "Dalam Nggahi Mbojo (Bahasa Dompu), kata sapaan 'Nahu' memiliki arti dalam bahasa Indonesia...", options: ["Kamu / Anda", "Saya / Aku", "Mereka", "Kita semua"], answer: 1 },
+          { q: "[Benar / Salah] Kata 'Nggomi' atau 'Ce'e' dalam sapaan Bahasa Dompu dapat digunakan untuk menyapa lawan bicara dengan sopan sesuai konteks.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Arti kata 'Mbojo' dalam ungkapan 'Dou Mbojo' merujuk pada...", options: ["Masyarakat / orang asal tanah Dompu dan Bima", "Nama alat musik tiup", "Jenis tarian perang", "Nama sungai"], answer: 0 },
+          { q: "Ungkapan adat atau falsafah hidup masyarakat Dompu-Bima yang menekankan ketakwaan kepada Allah SWT serta kepatuhan pada hukum dan adat adalah...", options: ["Nggahi Rawi Pahu", "Wura Bongi Monca", "Mpa'a Lengge", "Sere"], answer: 0 },
+          { q: "[Benar / Salah] 'Nggahi' bermakna kata/ucapan, 'Rawi' bermakna perbuatan, dan 'Pahu' bermakna pendirian/keputusan yang harus selaras.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Dalam Bahasa Dompu, kata 'Ruma' memiliki arti...", options: ["Rumah", "Sawah", "Gunung", "Pantai"], answer: 0 },
+          { q: "Arti kata 'Oi' atau 'Sa'e' dalam kosakata Bahasa Dompu yang berkaitan dengan perairan adalah...", options: ["Air", "Api", "Angin", "Tanah"], answer: 0 },
+          { q: "[Benar / Salah] Dalam Bahasa Dompu, kata 'Dou' berarti orang atau manusia.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Kata 'Nuntu' dalam Bahasa Dompu memiliki arti...", options: ["Menulis / mencatat", "Menyanyi", "Menari", "Memasak"], answer: 0 },
+          { q: "Kalimat sapaan ramah 'Aina dou?' atau menanyakan kabar dalam percakapan sehari-hari mencerminkan budaya...", options: ["Kesantunan dan kekerabatan (silahturahmi) masyarakat Dompu", "Ketidakpedulian terhadap sesama", "Sikap acuh tak acuh", "Bahasa resmi kenegaraan saja"], answer: 0 },
+          { q: "[Benar / Salah] Menggunakan bahasa daerah yang santun kepada orang tua dan guru merupakan wujud pelestarian adab dan budaya lokal Dompu.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Dalam bilangan/angka Bahasa Dompu, kata 'Esa' atau 'Sabua' berkaitan dengan bilangan...", options: ["Satu (1)", "Lima (5)", "Sepuluh (10)", "Seratus (100)"], answer: 0 },
+          { q: "Kata 'Dua' dalam Bahasa Dompu memiliki arti bilangan...", options: ["Dua (2)", "Tiga (3)", "Empat (4)", "Enam (6)"], answer: 0 },
+          { q: "[Benar / Salah] Angka 'Tolu' dalam kosakata Bahasa Dompu berarti tiga (3).", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Dalam Bahasa Dompu, kata 'Mada' berarti...", options: ["Mata", "Telinga", "Hidung", "Tangan"], answer: 0 },
+          { q: "Kata 'Kaki' atau 'Ai' dalam Bahasa Dompu merujuk pada bagian tubuh...", options: ["Kaki", "Kepala", "Bahu", "Jari"], answer: 0 },
+          { q: "[Benar / Salah] 'Lopi' dalam kosakata pesisir Dompu merujuk pada perahu.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Kata 'Nca'u' atau 'Nggahi' dalam konteks tutur kata yang baik harus dijaga agar tidak menyakiti hati orang lain. Sikap ini selaras dengan nilai...", options: ["Santun berbahasa (nggahi rawi pahu)", "Berkata kasar", "Menyebarkan kebohongan", "Berbicara tanpa etika"], answer: 0 },
+          { q: "Dalam Bahasa Dompu, kata 'Bola' dalam konteks kehidupan sehari-hari atau istilah lokal memiliki makna khusus sesuai kalimat; sedangkan kata 'Ma'a' sering digunakan untuk menanyakan...", options: ["Apa / mana", "Kapan saja", "Berapa harga", "Mengapa begitu"], answer: 0 },
+          { q: "[Benar / Salah] Mengenal nama-nama hari, waktu, dan benda sekitar dalam Bahasa Dompu membantu siswa melestarikan bahasa ibu.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Tradisi lisan dan ungkapan bijak (pantun/syair/nasihat) dalam budaya Dompu berfungsi untuk...", options: ["Menanamkan nilai moral, budi pekerti, dan nasihat kehidupan", "Menghapus sejarah lokal", "Menggantikan pelajaran matematika", "Menghindari komunikasi antarwarga"], answer: 0 },
+          { q: "Kata 'Kaboro' atau 'Lampa' dalam konteks gerak/aktivitas berkaitan dengan...", options: ["Berjalan / pergi", "Tidur nyenyak", "Makan bersama", "Membaca buku"], answer: 0 },
+          { q: "[Benar / Salah] Sikap saling menghargai antarpenutur bahasa daerah memperkuat kerukunan di Kabupaten Dompu dan sekitarnya.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Ketika menyapa guru atau tetangga yang lebih tua di Dompu, sikap yang paling tepat adalah...", options: ["Mengucapkan salam/sapaan dengan nada lembut, wajah ramah, dan postur sopan", "Memanggil dengan teriakan dari kejauhan", "Memalingkan muka saat berpapasan", "Berbicara sambil duduk membelakangi"], answer: 0 },
+          { q: "Kata 'Wunga' dalam Bahasa Dompu merujuk pada...", options: ["Bunga", "Batu", "Pasir", "Awan"], answer: 0 },
+          { q: "[Benar / Salah] Melatih percakapan sederhana menggunakan Bahasa Dompu di sekolah dan rumah membantu menjaga bahasa daerah agar tidak punah.", options: ["Benar", "Salah"], answer: 0 },
+          { q: "Dalam budaya masyarakat Dompu, kejujuran dan menepati janji sangat dijunjung tinggi karena mencerminkan...", options: ["Keteguhan ucapan dan perbuatan (nggahi rawi pahu)", "Sikap ingkar janji", "Ketidakjujuran", "Sikap mengabaikan amanah"], answer: 0 },
+          { q: "Kata 'Rima' atau 'Malam' dalam penunjuk waktu merujuk pada suasana...", options: ["Malam hari", "Pagi hari", "Siang hari", "Senja hari"], answer: 0 },
+          { q: "[Benar / Salah] Bahasa daerah Dompu merupakan kekayaan budaya lokal yang patut dibanggakan dan dilestarikan oleh generasi muda.", options: ["Benar", "Salah"], answer: 0 }
+        ],
+        essayQuestions: [
+          { q: "Kata 'Ruma' dalam Bahasa Daerah Dompu memiliki arti dalam bahasa Indonesia yaitu...", hint: "Rumah" },
+          { q: "Kata 'Dou' dalam Bahasa Daerah Dompu berarti...", hint: "Orang / manusia" },
+          { q: "Falsafah hidup masyarakat Dompu yang menekankan keselarasan kata, perbuatan, dan pendirian disebut Nggahi Rawi...", hint: "Pahu" },
+          { q: "Kata ganti orang pertama tunggal ('saya') dalam Bahasa Daerah Dompu adalah...", hint: "Nahu" },
+          { q: "Bilangan 'Tolu' dalam Bahasa Daerah Dompu menunjukkan angka...", hint: "3 / tiga" }
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 2. PENYIMPANAN & STATE APLIKASI
+    // =========================================================================
+    const STORAGE_KEYS = {
+      SCHEDULES: 'sdn17woja_cbt_schedules_v1',
+      SETTINGS: 'sdn17woja_cbt_settings_v1',
+      SUBMISSIONS: 'sdn17woja_cbt_submissions_v1',
+      SIMULATION: 'sdn17woja_cbt_sim_mode_v1'
+    };
+
+    const TEACHER_PASSWORD = 'admin17';
+
+    // URL Web App Google Apps Script untuk jadwal terpusat seluruh siswa
+    const CENTRAL_SCHEDULE_WEB_APP_URL =
+      'https://script.google.com/macros/s/AKfycbypEVJE4ckgH634Gj4WWPRk0QntDKFBLmfFilOOVuaXPTMUgABXzd4zaXg8eQ-h2DM/exec';
+
+    const SUBJECT_ID_ALIASES = {
+      pancasila: 'pancasila',
+      ppkn: 'pancasila',
+      pendidikan_pancasila: 'pancasila',
+      bindo: 'bindo',
+      bahasa_indonesia: 'bindo',
+      matematika: 'matematika',
+      mtk: 'matematika',
+      ipas: 'ipas',
+      seni: 'seni',
+      seni_budaya: 'seni',
+      sbdp: 'seni',
+      inggris: 'inggris',
+      binggris: 'inggris',
+      bahasa_inggris: 'inggris',
+      english: 'inggris',
+      pai: 'pai',
+      pendidikan_agama_islam: 'pai',
+      pjok: 'pjok',
+      mulok: 'mulok',
+      mulok_dompu: 'mulok',
+      bahasa_daerah_dompu: 'mulok',
+      bahasa_dompu: 'mulok'
+    };
+
+    function normalizeSubjectId(rawId) {
+      const cleaned = String(rawId || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[\s-]+/g, '_');
+      return SUBJECT_ID_ALIASES[cleaned] || cleaned;
+    }
+
+    function getDefaultSchedules() {
+      const now = new Date();
+      const base = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7, 30, 0);
+      const makeSlot = (dayOffset, startHour, startMin, durationMin) => {
+        const s = new Date(base);
+        s.setDate(s.getDate() + dayOffset);
+        s.setHours(startHour, startMin, 0, 0);
+        const e = new Date(s.getTime() + durationMin * 60000);
+        return {
+          start: toLocalDatetimeInputValue(s),
+          end: toLocalDatetimeInputValue(e),
+          durationMinutes: durationMin
+        };
+      };
+
+      return {
+        pancasila: makeSlot(0, 7, 30, 60),
+        bindo: makeSlot(0, 9, 30, 60),
+        matematika: makeSlot(1, 7, 30, 75),
+        ipas: makeSlot(1, 9, 30, 75),
+        seni: makeSlot(2, 7, 30, 60),
+        inggris: makeSlot(2, 9, 30, 60),
+        pai: makeSlot(3, 7, 30, 60),
+        pjok: makeSlot(3, 9, 30, 60),
+        mulok: makeSlot(4, 7, 30, 60)
+      };
+    }
+
+    function toLocalDatetimeInputValue(dateObj) {
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}`;
+    }
+
+    let subjectSchedules = (() => {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.SCHEDULES));
+        return saved ? { ...getDefaultSchedules(), ...saved } : getDefaultSchedules();
+      } catch {
+        return getDefaultSchedules();
+      }
+    })();
+
+    let appSettings = (() => {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {
+          whatsappNumber: '6282341417792',
+          googleSheetUrl: 'https://script.google.com/macros/s/AKfycbxx-QXEAFsXy6-BAHtNeuJtj5ti9ruxrtHvsChgQyYtC4XPnnBH0LaFS8Px3XV_/exec'
+        };
+      } catch {
+        return { whatsappNumber: '', googleSheetUrl: '' };
+      }
+    })();
+
+    let allSubmissions = (() => {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.SUBMISSIONS)) || [];
+      } catch {
+        return [];
+      }
+    })();
+
+    let simulationMode = localStorage.getItem(STORAGE_KEYS.SIMULATION) === 'true';
+    let centralSchedules = {};
+    let centralSyncMeta = {
+      status: 'loading',
+      message: 'Menghubungkan ke jadwal terpusat Google Apps Script...',
+      updatedAt: null
+    };
+    let isTeacherAuthenticated = false;
+    let currentView = 'studentHome';
+    let activeExamSession = null;
+    let examTimerInterval = null;
+    let lastCompletedResult = null;
+    let secretTapCount = 0;
+    let secretTapTimer = null;
+
+    // =========================================================================
+    // 2B. PENGAMBILAN & SINKRONISASI JADWAL TERPUSAT DARI GOOGLE APPS SCRIPT
+    // =========================================================================
+    // Membaca properti baris secara toleran (baik "mapel_id" maupun "Kolom A (mapel_id)")
+    function extractRowField(rowObj, fieldKey, fallbackIndex) {
+      if (!rowObj || typeof rowObj !== 'object') return undefined;
+      if (rowObj[fieldKey] !== undefined) return rowObj[fieldKey];
+      const keys = Object.keys(rowObj);
+      const matchedKey = keys.find((k) => {
+        const lower = k.toLowerCase();
+        return lower === fieldKey || lower.includes(`(${fieldKey})`) || lower.endsWith(fieldKey);
+      });
+      if (matchedKey) return rowObj[matchedKey];
+      if (typeof fallbackIndex === 'number' && keys[fallbackIndex] !== undefined) {
+        return rowObj[keys[fallbackIndex]];
+      }
+      return undefined;
+    }
+
+    function updateCentralSyncUI() {
+      const dot = document.getElementById('centralSyncDot');
+      const text = document.getElementById('centralSyncStatusText');
+      if (!dot || !text) return;
+
+      if (centralSyncMeta.status === 'synced') {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block';
+        text.className = 'font-semibold text-emerald-800';
+      } else if (centralSyncMeta.status === 'loading') {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping inline-block';
+        text.className = 'font-semibold text-amber-800';
+      } else {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500 inline-block';
+        text.className = 'font-semibold text-rose-700';
+      }
+      text.textContent = centralSyncMeta.message;
+
+      const teacherSummary = document.getElementById('teacherCentralScheduleSummary');
+      if (teacherSummary) {
+        const count = Object.keys(centralSchedules).length;
+        if (centralSyncMeta.status === 'synced') {
+          teacherSummary.className = 'p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950';
+          teacherSummary.innerHTML = `<strong>Terhubung ke Jadwal Terpusat Google Sheets:</strong> Ditemukan <strong>${count}</strong> mata pelajaran dari server pusat (${escapeHtml(centralSyncMeta.message)}). Nilai waktu di tabel di bawah otomatis disinkronkan.`;
+        } else {
+          teacherSummary.className = 'p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950';
+          teacherSummary.innerHTML = `<strong>Status Jadwal Pusat:</strong> ${escapeHtml(centralSyncMeta.message)} — Sistem menggunakan jadwal cadangan lokal.`;
+        }
+      }
+    }
+
+    async function fetchCentralSchedules(manualTrigger = false) {
+      centralSyncMeta = {
+        status: 'loading',
+        message: 'Memuat jadwal terpusat...',
+        updatedAt: centralSyncMeta.updatedAt
+      };
+      updateCentralSyncUI();
+
+      try {
+        const response = await fetch(CENTRAL_SCHEDULE_WEB_APP_URL, { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const payload = await response.json();
+        const rows = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload.jadwal)
+            ? payload.jadwal
+            : [];
+
+        if (!rows.length) {
+          throw new Error('Data jadwal kosong di Google Sheets');
+        }
+
+        const parsedMap = {};
+        rows.forEach((item) => {
+          const rawMapel = extractRowField(item, 'mapel_id', 0);
+          const id = normalizeSubjectId(rawMapel);
+          if (!id) return;
+
+          const rawMulai = extractRowField(item, 'mulai', 2);
+          const rawSelesai = extractRowField(item, 'selesai', 3);
+          const rawDurasi = extractRowField(item, 'durasi_menit', 4);
+          const rawAktif = extractRowField(item, 'aktif', 5);
+          const rawNama = extractRowField(item, 'nama_mapel', 1);
+
+          const startMs = Date.parse(rawMulai);
+          const endMs = Date.parse(rawSelesai);
+          const isActiveFlag =
+            rawAktif === undefined ||
+            rawAktif === null ||
+            rawAktif === '' ||
+            rawAktif === true ||
+            String(rawAktif).trim().toLowerCase() === 'true' ||
+            String(rawAktif).trim() === '1';
+
+          const parsedEntry = {
+            start: !isNaN(startMs) ? toLocalDatetimeInputValue(new Date(startMs)) : '',
+            end: !isNaN(endMs) ? toLocalDatetimeInputValue(new Date(endMs)) : '',
+            startMs,
+            endMs,
+            durationMinutes: Number(rawDurasi) || 60,
+            aktif: isActiveFlag,
+            namaMapel: rawNama || ''
+          };
+
+          parsedMap[id] = parsedEntry;
+
+          // Sinkronkan juga ke state jadwal lokal agar Panel Guru ikut menampilkan waktu yang sama
+          if (parsedEntry.start && parsedEntry.end) {
+            subjectSchedules[id] = {
+              start: parsedEntry.start,
+              end: parsedEntry.end,
+              durationMinutes: parsedEntry.durationMinutes
+            };
+          }
+        });
+
+        if (Object.keys(parsedMap).length === 0) {
+          throw new Error('Tidak ada baris mapel valid di Google Sheets');
+        }
+
+        localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(subjectSchedules));
+        centralSchedules = parsedMap;
+        const syncTimeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        centralSyncMeta = {
+          status: 'synced',
+          message: `Jadwal Terpusat Sinkron (${Object.keys(parsedMap).length} Mapel • ${syncTimeStr})`,
+          updatedAt: new Date().toISOString()
+        };
+
+        updateCentralSyncUI();
+        if (currentView === 'studentHome') {
+          renderSubjectCards();
+        } else if (currentView === 'teacherPanel') {
+          renderScheduleTable();
+        }
+
+        if (manualTrigger) {
+          showToast('Jadwal ujian terpusat berhasil diperbarui dari Google Sheets.', '✅');
+        }
+      } catch (err) {
+        console.warn('Gagal mengambil jadwal terpusat, memakai cadangan lokal:', err);
+        centralSchedules = {};
+        centralSyncMeta = {
+          status: 'fallback',
+          message: 'Jadwal Cadangan Lokal (Gagal terhubung ke server jadwal pusat)',
+          updatedAt: centralSyncMeta.updatedAt
+        };
+        updateCentralSyncUI();
+        if (manualTrigger) {
+          showToast('Tidak dapat memuat jadwal pusat. Menggunakan jadwal cadangan lokal.', '⚠️');
+        }
+      }
+    }
+
+    function getEffectiveSchedule(subjectId) {
+      const central = centralSchedules[subjectId];
+      if (central) {
+        return {
+          source: 'central',
+          start: central.start,
+          end: central.end,
+          startMs: central.startMs,
+          endMs: central.endMs,
+          durationMinutes: central.durationMinutes || 60,
+          aktif: central.aktif
+        };
+      }
+
+      const local = subjectSchedules[subjectId] || {};
+      const startMs = local.start ? new Date(local.start).getTime() : NaN;
+      const endMs = local.end ? new Date(local.end).getTime() : NaN;
+      return {
+        source: 'local',
+        start: local.start || '',
+        end: local.end || '',
+        startMs,
+        endMs,
+        durationMinutes: local.durationMinutes || 60,
+        aktif: true
+      };
+    }
+
+    // =========================================================================
+    // 3. TOAST & MODAL DIALOG KUSTOM + AUTENTIKASI PANEL GURU
+    // =========================================================================
+    function showToast(message, icon = 'ℹ️') {
+      const banner = document.getElementById('toastBanner');
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastMessage').textContent = message;
+      banner.classList.remove('hidden');
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => {
+        banner.classList.add('hidden');
+      }, 3600);
+    }
+
+    function toggleModalPasswordVisibility() {
+      const inputEl = document.getElementById('modalInput');
+      const eyeShow = document.getElementById('eyeIconShow');
+      const eyeHide = document.getElementById('eyeIconHide');
+      if (!inputEl) return;
+      const isPassword = inputEl.type === 'password';
+      inputEl.type = isPassword ? 'text' : 'password';
+      eyeShow.classList.toggle('hidden', isPassword);
+      eyeHide.classList.toggle('hidden', !isPassword);
+    }
+
+    function openConfirmModal({ title, body, showInput = false, confirmText = 'Lanjutkan', onConfirm }) {
+      const modal = document.getElementById('customModal');
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalBody').textContent = body;
+      const inputWrap = document.getElementById('modalInputWrap');
+      const inputEl = document.getElementById('modalInput');
+      const eyeShow = document.getElementById('eyeIconShow');
+      const eyeHide = document.getElementById('eyeIconHide');
+
+      if (showInput) {
+        inputWrap.classList.remove('hidden');
+        inputEl.value = '';
+        inputEl.type = 'password';
+        if (eyeShow) eyeShow.classList.remove('hidden');
+        if (eyeHide) eyeHide.classList.add('hidden');
+        setTimeout(() => inputEl.focus(), 80);
+      } else {
+        inputWrap.classList.add('hidden');
+      }
+
+      const confirmBtn = document.getElementById('modalConfirmBtn');
+      const cancelBtn = document.getElementById('modalCancelBtn');
+      confirmBtn.textContent = confirmText;
+
+      const close = () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      };
+
+      cancelBtn.onclick = close;
+      confirmBtn.onclick = () => {
+        const val = inputEl.value;
+        close();
+        if (onConfirm) onConfirm(val);
+      };
+
+      inputEl.onkeydown = (e) => {
+        if (e.key === 'Enter') confirmBtn.click();
+      };
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function triggerHiddenTeacherAccess() {
+      if (currentView === 'examRoom') {
+        showToast('Selesaikan ujian terlebih dahulu sebelum membuka Panel Guru.', '⚠️');
+        return;
+      }
+      if (isTeacherAuthenticated) {
+        openTeacherPanel();
+        return;
+      }
+      openConfirmModal({
+        title: 'Akses Panel Guru',
+        body: 'Masukkan kata sandi guru/admin untuk mengatur jadwal ujian, integrasi WA & Google Sheets, serta menilai soal isian.',
+        showInput: true,
+        confirmText: 'Masuk Panel Guru',
+        onConfirm: (pwd) => {
+          if (pwd === TEACHER_PASSWORD) {
+            isTeacherAuthenticated = true;
+            openTeacherPanel();
+            showToast('Selamat datang di Panel Guru SDN 17 Woja.', '🔓');
+          } else {
+            showToast('Kata sandi salah! Silakan coba kembali.', '❌');
+          }
+        }
+      });
+    }
+
+    // =========================================================================
+    // 4. LOGIKA WAKTU REAL-TIME & STATUS JADWAL OTOMATIS
+    // =========================================================================
+    function getScheduleStatus(subjectId) {
+      if (simulationMode) {
+        return {
+          state: 'ACTIVE',
+          label: 'AKTIF (Mode Simulasi)',
+          detail: 'Dapat dikerjakan sekarang',
+          canStart: true
+        };
+      }
+
+      const cfg = getEffectiveSchedule(subjectId);
+
+      if (cfg.aktif === false) {
+        return {
+          state: 'CLOSED',
+          label: 'Dinonaktifkan Panitia',
+          detail: 'Paket soal sedang dinonaktifkan pada jadwal pusat',
+          canStart: false
+        };
+      }
+
+      if (isNaN(cfg.startMs) || isNaN(cfg.endMs)) {
+        return {
+          state: 'UPCOMING',
+          label: 'Belum Dijadwalkan',
+          detail: 'Menunggu jadwal guru',
+          canStart: false
+        };
+      }
+
+      const nowMs = Date.now();
+
+      if (nowMs < cfg.startMs) {
+        const diffMs = cfg.startMs - nowMs;
+        const hrs = Math.floor(diffMs / 3600000);
+        const mins = Math.floor((diffMs % 3600000) / 60000);
+        const secs = Math.floor((diffMs % 60000) / 1000);
+        const countdown = hrs > 24
+          ? `${Math.floor(hrs / 24)} hari ${hrs % 24} jam lagi`
+          : `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        return {
+          state: 'UPCOMING',
+          label: 'Belum Dimulai',
+          detail: `Mulai dalam ${countdown}`,
+          canStart: false
+        };
+      }
+
+      if (nowMs >= cfg.startMs && nowMs <= cfg.endMs) {
+        const remMs = cfg.endMs - nowMs;
+        const remMins = Math.max(1, Math.floor(remMs / 60000));
+        return {
+          state: 'ACTIVE',
+          label: 'SEDANG BERLANGSUNG',
+          detail: `Tersisa ${remMins} menit sebelum ditutup`,
+          canStart: true
+        };
+      }
+
+      return {
+        state: 'CLOSED',
+        label: 'Selesai / Ditutup',
+        detail: 'Waktu pelaksanaan telah berakhir',
+        canStart: false
+      };
+    }
+
+    function formatReadableDateTime(dtStr) {
+      if (!dtStr) return '-';
+      const d = new Date(dtStr);
+      if (isNaN(d.getTime())) return dtStr;
+      return d.toLocaleString('id-ID', {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function updateClockAndCards() {
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('id-ID', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+      });
+      const timeStr = now.toLocaleTimeString('id-ID', { hour12: false });
+      document.getElementById('liveDateText').textContent = dateStr;
+      document.getElementById('liveTimeText').textContent = timeStr;
+
+      if (currentView === 'studentHome') {
+        renderSubjectCards();
+      } else if (currentView === 'teacherPanel') {
+        updateScheduleStatusesInTable();
+      }
+    }
+
+    // =========================================================================
+    // 5. RENDER BERANDA SISWA & KARTU MATA PELAJARAN
+    // =========================================================================
+    function renderSubjectCards() {
+      const grid = document.getElementById('subjectCardsGrid');
+      const simBadge = document.getElementById('simModeBadge');
+      if (simulationMode) {
+        simBadge.classList.remove('hidden');
+      } else {
+        simBadge.classList.add('hidden');
+      }
+
+      const colorMap = {
+        rose: 'border-rose-200 bg-rose-50/40 text-rose-800',
+        sky: 'border-sky-200 bg-sky-50/40 text-sky-800',
+        indigo: 'border-indigo-200 bg-indigo-50/40 text-indigo-800',
+        emerald: 'border-emerald-200 bg-emerald-50/40 text-emerald-800',
+        amber: 'border-amber-200 bg-amber-50/40 text-amber-800',
+        violet: 'border-violet-200 bg-violet-50/40 text-violet-800',
+        teal: 'border-teal-200 bg-teal-50/40 text-teal-800',
+        cyan: 'border-cyan-200 bg-cyan-50/40 text-cyan-800',
+        lime: 'border-lime-200 bg-lime-50/40 text-lime-800'
+      };
+
+      grid.innerHTML = SUBJECT_BANK.map((subj) => {
+        const sched = getEffectiveSchedule(subj.id);
+        const status = getScheduleStatus(subj.id);
+
+        let badgeClass = 'bg-slate-200 text-slate-700';
+        if (status.state === 'ACTIVE') badgeClass = 'bg-emerald-600 text-white';
+        else if (status.state === 'UPCOMING') badgeClass = 'bg-amber-100 text-amber-900 border border-amber-300';
+        else if (status.state === 'CLOSED') badgeClass = 'bg-rose-100 text-rose-800 border border-rose-200';
+
+        const sourceBadge = sched.source === 'central'
+          ? '<span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">Jadwal Pusat</span>'
+          : '<span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">Jadwal Lokal</span>';
+
+        return `
+          <div data-mapel="${subj.id}" class="bg-white rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold border ${colorMap[subj.color] || 'bg-slate-100 text-slate-800'}">
+                    ${subj.code}
+                  </span>
+                  ${sourceBadge}
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold ${badgeClass}">
+                  ${status.label}
+                </span>
+              </div>
+
+              <h3 class="text-base sm:text-lg font-extrabold text-slate-900 mt-3 leading-snug">${subj.name}</h3>
+              <p class="text-xs text-slate-600 mt-1 leading-relaxed">${subj.description}</p>
+
+              <div class="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs space-y-1 text-slate-600">
+                <div><strong>Mulai:</strong> ${formatReadableDateTime(sched.start)}</div>
+                <div><strong>Selesai:</strong> ${formatReadableDateTime(sched.end)}</div>
+                <div><strong>Durasi:</strong> ${sched.durationMinutes || 60} Menit • 35 Butir Soal</div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-100">
+              <div class="status-jadwal text-[11px] font-semibold ${status.state === 'ACTIVE' ? 'text-emerald-700' : 'text-slate-500'} mb-2">
+                ${status.detail}
+              </div>
+              <button
+                onclick="startSubjectExam('${subj.id}')"
+                ${status.canStart ? '' : 'disabled'}
+                class="btn-mulai-ujian w-full py-3 px-4 rounded-xl font-bold text-sm transition shadow-xs ${
+                  status.canStart
+                    ? 'bg-blue-700 hover:bg-blue-800 text-white cursor-pointer'
+                    : 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                }">
+                ${status.canStart ? 'Mulai Kerjakan Ujian →' : 'Terkunci Sesuai Jadwal'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 6. PENGACAKAN SOAL & OPSI JAWABAN (FISHER-YATES SHUFFLE)
+    // =========================================================================
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function buildRandomizedExamQuestions(subject) {
+      const shuffledPg = shuffleArray(subject.pgQuestions).map((item, index) => {
+        const isTrueFalse = item.options.length === 2 && item.options[0] === 'Benar';
+        if (isTrueFalse) {
+          return {
+            number: index + 1,
+            type: 'BS',
+            q: item.q,
+            options: [...item.options],
+            correctOptionIndex: item.answer,
+            userAnswer: null,
+            doubt: false
+          };
+        }
+        const indexedOptions = item.options.map((optText, optIdx) => ({
+          text: optText,
+          isCorrect: optIdx === item.answer
+        }));
+        const randomizedOptions = shuffleArray(indexedOptions);
+        const newCorrectIdx = randomizedOptions.findIndex((o) => o.isCorrect);
+
+        return {
+          number: index + 1,
+          type: 'PG',
+          q: item.q,
+          options: randomizedOptions.map((o) => o.text),
+          correctOptionIndex: newCorrectIdx,
+          userAnswer: null,
+          doubt: false
+        };
+      });
+
+      const shuffledEssay = shuffleArray(subject.essayQuestions).map((item, idx) => ({
+        number: 31 + idx,
+        type: 'ESSAY',
+        q: item.q,
+        hint: item.hint,
+        userAnswer: '',
+        doubt: false
+      }));
+
+      return [...shuffledPg, ...shuffledEssay];
+    }
+
+    // =========================================================================
+    // 7. ALUR MEMULAI, MENGERJAKAN & MENYELESAIKAN UJIAN CBT
+    // =========================================================================
+    function startSubjectExam(subjectId) {
+      const studentName = document.getElementById('inputStudentName').value.trim();
+      const studentClass = document.getElementById('inputStudentClass').value;
+      const studentAbsen = document.getElementById('inputStudentAbsen').value.trim();
+
+      if (!studentName || !studentAbsen) {
+        showToast('Harap isi Nama Lengkap dan Nomor Absen terlebih dahulu!', '⚠️');
+        document.getElementById('inputStudentName').focus();
+        return;
+      }
+
+      const status = getScheduleStatus(subjectId);
+      if (!status.canStart) {
+        showToast('Paket soal ini belum aktif atau sudah ditutup.', '🔒');
+        return;
+      }
+
+      const subject = SUBJECT_BANK.find((s) => s.id === subjectId);
+      const sched = getEffectiveSchedule(subjectId);
+
+      openConfirmModal({
+        title: `Mulai Ujian ${subject.name}?`,
+        body: `Peserta: ${studentName} (${studentClass} / Absen ${studentAbsen}). Durasi pengerjaan ${sched.durationMinutes} menit. Soal akan diacak otomatis.`,
+        confirmText: 'Ya, Mulai Ujian',
+        onConfirm: () => {
+          const questions = buildRandomizedExamQuestions(subject);
+          activeExamSession = {
+            subjectId: subject.id,
+            subjectName: subject.name,
+            studentName,
+            studentClass,
+            studentAbsen,
+            questions,
+            currentIndex: 0,
+            remainingSeconds: (sched.durationMinutes || 60) * 60,
+            startedAt: new Date().toISOString()
+          };
+
+          switchView('examRoom');
+          renderExamRoom();
+          startExamTimer();
+          showToast(`Ujian ${subject.name} dimulai. Selamat mengerjakan!`, '✍️');
+        }
+      });
+    }
+
+    function startExamTimer() {
+      clearInterval(examTimerInterval);
+      updateTimerDisplay();
+      examTimerInterval = setInterval(() => {
+        if (!activeExamSession) {
+          clearInterval(examTimerInterval);
+          return;
+        }
+        activeExamSession.remainingSeconds--;
+        updateTimerDisplay();
+        if (activeExamSession.remainingSeconds <= 0) {
+          clearInterval(examTimerInterval);
+          showToast('Waktu ujian telah habis! Jawaban dikumpulkan otomatis.', '⏰');
+          finalizeAndSubmitExam();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      if (!activeExamSession) return;
+      const sec = Math.max(0, activeExamSession.remainingSeconds);
+      const mins = Math.floor(sec / 60);
+      const remSec = sec % 60;
+      document.getElementById('examTimerDisplay').textContent =
+        `${String(mins).padStart(2, '0')}:${String(remSec).padStart(2, '0')}`;
+    }
+
+    function renderExamRoom() {
+      if (!activeExamSession) return;
+      const { subjectName, studentName, studentClass, studentAbsen, questions, currentIndex } = activeExamSession;
+      const currentQ = questions[currentIndex];
+
+      document.getElementById('examSubjectBadge').textContent = subjectName;
+      document.getElementById('examStudentInfo').textContent = `${studentName} (${studentClass} • Absen ${studentAbsen})`;
+      document.getElementById('currentQuestionNumber').textContent = currentQ.number;
+
+      const typeLabelMap = {
+        PG: 'Pilihan Ganda',
+        BS: 'Benar / Salah',
+        ESSAY: 'Isian Singkat (Penilaian Manual Guru)'
+      };
+      document.getElementById('examQuestionTypeBadge').textContent = typeLabelMap[currentQ.type];
+      document.getElementById('checkboxDoubt').checked = !!currentQ.doubt;
+      document.getElementById('questionTextContainer').textContent = currentQ.q;
+
+      const answerContainer = document.getElementById('answerInputContainer');
+      if (currentQ.type === 'PG' || currentQ.type === 'BS') {
+        const letters = ['A', 'B', 'C', 'D'];
+        answerContainer.innerHTML = currentQ.options.map((optText, idx) => {
+          const isSelected = currentQ.userAnswer === idx;
+          return `
+            <button
+              type="button"
+              onclick="selectOptionAnswer(${idx})"
+              class="option-card w-full text-left p-4 rounded-xl border-2 flex items-center gap-3.5 ${
+                isSelected
+                  ? 'border-blue-700 bg-blue-50/80 text-blue-950 font-bold shadow-xs'
+                  : 'border-slate-200 hover:border-blue-300 bg-white text-slate-800 font-medium'
+              }">
+              <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-extrabold shrink-0 ${
+                isSelected ? 'bg-blue-700 text-white' : 'bg-slate-100 text-slate-700'
+              }">
+                ${currentQ.type === 'BS' ? (idx === 0 ? 'B' : 'S') : letters[idx]}
+              </span>
+              <span class="text-sm sm:text-base leading-snug">${optText}</span>
+            </button>
+          `;
+        }).join('');
+      } else {
+        answerContainer.innerHTML = `
+          <div class="space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Ketik Jawaban Singkat Anda:</label>
+            <input
+              id="essayAnswerInput"
+              type="text"
+              value="${escapeHtml(currentQ.userAnswer || '')}"
+              oninput="updateEssayAnswer(this.value)"
+              placeholder="Tulis jawaban singkat dengan jelas..."
+              class="w-full px-4 py-3.5 rounded-xl border-2 border-slate-300 focus:border-blue-700 focus:outline-none text-base font-semibold text-slate-900"
+            />
+            <p class="text-xs text-slate-500">Jawaban isian akan diperiksa dan diberi skor secara manual oleh guru setelah ujian selesai.</p>
+          </div>
+        `;
+      }
+
+      document.getElementById('btnPrevQuestion').disabled = currentIndex === 0;
+      const nextBtn = document.getElementById('btnNextQuestion');
+      if (currentIndex === questions.length - 1) {
+        nextBtn.textContent = 'Selesai & Kirim ✓';
+        nextBtn.className = 'px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center gap-2 shadow-sm transition';
+        nextBtn.onclick = confirmFinishExam;
+      } else {
+        nextBtn.textContent = 'Selanjutnya →';
+        nextBtn.className = 'px-5 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm flex items-center gap-2 shadow-sm transition';
+        nextBtn.onclick = () => navigateQuestion(1);
+      }
+
+      const answeredCount = questions.filter((q) =>
+        q.type === 'ESSAY' ? (q.userAnswer && q.userAnswer.trim().length > 0) : q.userAnswer !== null
+      ).length;
+      document.getElementById('answeredCounterText').textContent = `Terjawab: ${answeredCount} / ${questions.length}`;
+
+      const gridNav = document.getElementById('questionGridNav');
+      gridNav.innerHTML = questions.map((item, idx) => {
+        const isAnswered = item.type === 'ESSAY'
+          ? (item.userAnswer && item.userAnswer.trim().length > 0)
+          : item.userAnswer !== null;
+        const isCurrent = idx === currentIndex;
+
+        let btnStyle = 'bg-slate-100 text-slate-700 border-slate-200';
+        if (item.doubt) btnStyle = 'bg-amber-400 text-amber-950 border-amber-500';
+        else if (isAnswered) btnStyle = 'bg-emerald-600 text-white border-emerald-700';
+
+        const ringStyle = isCurrent ? 'ring-2 ring-offset-1 ring-blue-700 scale-105' : '';
+
+        return `
+          <button
+            type="button"
+            onclick="jumpToQuestion(${idx})"
+            class="h-9 rounded-lg border text-xs font-extrabold transition ${btnStyle} ${ringStyle}">
+            ${item.number}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectOptionAnswer(optIdx) {
+      if (!activeExamSession) return;
+      activeExamSession.questions[activeExamSession.currentIndex].userAnswer = optIdx;
+      renderExamRoom();
+    }
+
+    function updateEssayAnswer(textVal) {
+      if (!activeExamSession) return;
+      activeExamSession.questions[activeExamSession.currentIndex].userAnswer = textVal;
+      const answeredCount = activeExamSession.questions.filter((q) =>
+        q.type === 'ESSAY' ? (q.userAnswer && q.userAnswer.trim().length > 0) : q.userAnswer !== null
+      ).length;
+      document.getElementById('answeredCounterText').textContent = `Terjawab: ${answeredCount} / ${activeExamSession.questions.length}`;
+    }
+
+    function toggleDoubtCurrent() {
+      if (!activeExamSession) return;
+      const q = activeExamSession.questions[activeExamSession.currentIndex];
+      q.doubt = !q.doubt;
+      renderExamRoom();
+    }
+
+    function navigateQuestion(step) {
+      if (!activeExamSession) return;
+      const target = activeExamSession.currentIndex + step;
+      if (target >= 0 && target < activeExamSession.questions.length) {
+        activeExamSession.currentIndex = target;
+        renderExamRoom();
+      }
+    }
+
+    function jumpToQuestion(idx) {
+      if (!activeExamSession) return;
+      activeExamSession.currentIndex = idx;
+      renderExamRoom();
+    }
+
+    function confirmFinishExam() {
+      if (!activeExamSession) return;
+      const unanswered = activeExamSession.questions.filter((q) =>
+        q.type === 'ESSAY' ? !(q.userAnswer && q.userAnswer.trim().length > 0) : q.userAnswer === null
+      ).length;
+
+      const warningMsg = unanswered > 0
+        ? `Masih ada ${unanswered} soal yang belum dijawab. Apakah Anda yakin ingin mengakhiri ujian dan mengirim hasil sekarang?`
+        : 'Semua soal sudah terjawab. Apakah Anda yakin ingin mengakhiri ujian dan mengirim jawaban?';
+
+      openConfirmModal({
+        title: 'Selesaikan & Kirim Ujian?',
+        body: warningMsg,
+        confirmText: 'Ya, Kirim Sekarang',
+        onConfirm: finalizeAndSubmitExam
+      });
+    }
+
+    function finalizeAndSubmitExam() {
+      if (!activeExamSession) return;
+      clearInterval(examTimerInterval);
+
+      const { subjectId, subjectName, studentName, studentClass, studentAbsen, questions } = activeExamSession;
+
+      let pgCorrect = 0;
+      const essayAnswers = [];
+
+      questions.forEach((q) => {
+        if (q.type === 'PG' || q.type === 'BS') {
+          if (q.userAnswer === q.correctOptionIndex) pgCorrect++;
+        } else if (q.type === 'ESSAY') {
+          essayAnswers.push({
+            number: q.number,
+            question: q.q,
+            hint: q.hint,
+            studentAnswer: (q.userAnswer || '').trim() || '(Tidak dijawab)'
+          });
+        }
+      });
+
+      const pgScore = Number((pgCorrect * 2.5).toFixed(1));
+      const nowStr = new Date().toLocaleString('id-ID', {
+        day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+
+      const submissionRecord = {
+        id: 'SUB-' + Date.now(),
+        timestamp: nowStr,
+        school: 'Sekolah Dasar Negeri 17 Woja',
+        subjectId,
+        subjectName,
+        studentName,
+        studentClass,
+        studentAbsen,
+        pgCorrect,
+        pgTotal: 30,
+        pgScore,
+        essayScore: null,
+        totalScore: pgScore,
+        status: 'Menunggu Peninjauan Isian Guru',
+        essayAnswers
+      };
+
+      allSubmissions.unshift(submissionRecord);
+      localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(allSubmissions));
+
+      lastCompletedResult = submissionRecord;
+      activeExamSession = null;
+
+      // Kirim otomatis ke Google Sheets jika URL tersedia
+      if ((appSettings.googleSheetUrl || '').trim()) {
+        postRecordToGoogleSheet(submissionRecord, { silent: true });
+      }
+
+      renderExamResultView(submissionRecord);
+      switchView('examResult');
+    }
+
+    // =========================================================================
+    // 8. HALAMAN HASIL & PENGIRIMAN KE WHATSAPP SERTA GOOGLE SHEETS
+    // =========================================================================
+    function renderExamResultView(res) {
+      document.getElementById('resStudentName').textContent = res.studentName;
+      document.getElementById('resStudentClassAbsen').textContent = `${res.studentClass} / No. Absen ${res.studentAbsen}`;
+      document.getElementById('resSubjectName').textContent = res.subjectName;
+      document.getElementById('resTimestamp').textContent = res.timestamp;
+      document.getElementById('resPgCorrect').textContent = `${res.pgCorrect} / 30`;
+      document.getElementById('resPgScore').textContent = `${res.pgScore}`;
+
+      const sheetStatusEl = document.getElementById('sheetSyncStatusText');
+      if (appSettings.googleSheetUrl) {
+        sheetStatusEl.textContent = 'URL Google Sheets terkonfigurasi. Klik tombol "Kirim ke Google Sheets" untuk menyimpan ke spreadsheet.';
+      } else {
+        sheetStatusEl.textContent = 'Catatan: URL Google Sheets belum diatur di Panel Guru. Anda tetap dapat mengirim laporan langsung lewat WhatsApp Guru.';
+      }
+
+      const listEl = document.getElementById('resEssayReviewList');
+      listEl.innerHTML = res.essayAnswers.map((item, i) => `
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-sm">
+          <div class="font-bold text-slate-800">Isian ${i + 1} (Soal No. ${item.number}): ${item.question}</div>
+          <div class="mt-1 text-blue-900 font-semibold">Jawaban Siswa: <span class="underline">${escapeHtml(item.studentAnswer)}</span></div>
+        </div>
+      `).join('');
+    }
+
+    function buildWhatsAppMessage(record) {
+      const essayLines = record.essayAnswers.map((e, i) =>
+        `${i + 1}. ${e.question}\n   Jawaban: ${e.studentAnswer}`
+      ).join('\n');
+
+      const totalInfo = record.essayScore !== null
+        ? `Skor Isian (Guru): ${record.essayScore}/25\nNilai Akhir: ${record.totalScore}/100`
+        : `Skor Isian: Menunggu Peninjauan Guru (Maks. 25)\nSkor Sementara PG/BS: ${record.pgScore}/75`;
+
+      return [
+        `*LAPORAN HASIL CBT SAS GANJIL*`,
+        `*${record.school}*`,
+        `--------------------------------`,
+        `Nama Siswa : ${record.studentName}`,
+        `Kelas / Absen : ${record.studentClass} / ${record.studentAbsen}`,
+        `Mata Pelajaran : ${record.subjectName}`,
+        `Waktu Selesai : ${record.timestamp}`,
+        `--------------------------------`,
+        `Benar PG/BS : ${record.pgCorrect} dari 30 soal`,
+        `${totalInfo}`,
+        `--------------------------------`,
+        `*JAWABAN 5 SOAL ISIAN SINGKAT:*`,
+        essayLines
+      ].join('\n');
+    }
+
+    function sendCurrentResultToWhatsApp() {
+      if (!lastCompletedResult) return;
+      sendRecordToWhatsApp(lastCompletedResult);
+    }
+
+    function sendRecordToWhatsApp(record) {
+      const cleanPhone = (appSettings.whatsappNumber || '').replace(/[^0-9]/g, '');
+      const text = encodeURIComponent(buildWhatsAppMessage(record));
+      const waUrl = cleanPhone
+        ? `https://wa.me/${cleanPhone}?text=${text}`
+        : `https://wa.me/?text=${text}`;
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+    }
+
+    async function sendCurrentResultToGoogleSheet() {
+      if (!lastCompletedResult) return;
+      await postRecordToGoogleSheet(lastCompletedResult);
+    }
+
+    function buildSubmissionPayload(record, action = 'upsert_submission') {
+      const essayAnswers = Array.isArray(record.essayAnswers) ? record.essayAnswers : [];
+      return {
+        action,
+        id: record.id,
+        timestamp: record.timestamp,
+        school: record.school || 'Sekolah Dasar Negeri 17 Woja',
+        studentName: record.studentName,
+        studentClass: record.studentClass,
+        studentAbsen: record.studentAbsen,
+        subjectId: record.subjectId || normalizeSubjectId(record.subjectName),
+        subjectName: record.subjectName,
+        pgCorrect: record.pgCorrect,
+        pgTotal: record.pgTotal || 30,
+        pgScore: record.pgScore,
+        essayScore: record.essayScore !== null && record.essayScore !== undefined ? record.essayScore : 'Belum Dinilai',
+        totalScore: record.totalScore,
+        status: record.status || (record.essayScore !== null && record.essayScore !== undefined ? 'Selesai Dinilai Guru' : 'Menunggu Peninjauan Isian Guru'),
+        essaySummary: essayAnswers.map((e, i) => `[${i + 1}] ${e.studentAnswer}`).join(' | '),
+        essayAnswers
+      };
+    }
+
+    async function postRecordToGoogleSheet(record, options = {}) {
+      const silent = !!options.silent;
+      const url = (appSettings.googleSheetUrl || '').trim();
+      if (!url) {
+        if (!silent) showToast('URL Google Apps Script belum diatur di Panel Guru.', '⚠️');
+        return false;
+      }
+
+      const payload = buildSubmissionPayload(record, options.action || 'upsert_submission');
+
+      try {
+        if (!silent) showToast('Menyinkronkan data hasil ujian ke Google Sheets...', '⏳');
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!silent) {
+          showToast('Data berhasil disinkronkan ke Google Sheets!', '✅');
+        }
+        const statusEl = document.getElementById('sheetSyncStatusText');
+        if (statusEl) {
+          statusEl.textContent = '✅ Tersinkron ke Google Sheets pada ' + new Date().toLocaleTimeString('id-ID');
+        }
+        return true;
+      } catch (err) {
+        if (!silent) showToast('Gagal terhubung ke Google Sheets. Periksa URL Web App.', '❌');
+        return false;
+      }
+    }
+
+    function parseRemoteEssayAnswers(rawItem, subjectId) {
+      if (Array.isArray(rawItem.essayAnswers) && rawItem.essayAnswers.length > 0) {
+        return rawItem.essayAnswers.map((ans, idx) => ({
+          number: ans.number || (31 + idx),
+          question: ans.question || `Soal Isian #${idx + 1}`,
+          hint: ans.hint || '-',
+          studentAnswer: ans.studentAnswer || '(Tidak dijawab)'
+        }));
+      }
+
+      const subjObj = SUBJECT_BANK.find((s) => s.id === subjectId);
+      const bankEssays = subjObj ? subjObj.essayQuestions : [];
+      const summaryStr = String(extractRowField(rawItem, 'essaySummary') || extractRowField(rawItem, 'essay_summary') || '');
+      const parts = summaryStr
+        ? summaryStr.split(' | ').map((seg) => seg.replace(/^\[\d+\]\s*/, '').trim())
+        : [];
+
+      const count = Math.max(5, bankEssays.length, parts.length);
+      const list = [];
+      for (let i = 0; i < count; i++) {
+        const ref = bankEssays[i] || {};
+        list.push({
+          number: 31 + i,
+          question: ref.q || `Soal Isian Singkat #${i + 1}`,
+          hint: ref.hint || '-',
+          studentAnswer: parts[i] !== undefined && parts[i] !== '' ? parts[i] : '(Tidak dijawab)'
+        });
+      }
+      return list;
+    }
+
+    function normalizeRemoteSubmission(rawItem) {
+      if (!rawItem || typeof rawItem !== 'object') return null;
+      const studentName = String(extractRowField(rawItem, 'studentName') || extractRowField(rawItem, 'nama_siswa') || '').trim();
+      const subjectName = String(extractRowField(rawItem, 'subjectName') || extractRowField(rawItem, 'mata_pelajaran') || '').trim();
+      if (!studentName && !subjectName) return null;
+
+      const rawSubjId = extractRowField(rawItem, 'subjectId') || subjectName;
+      const subjectId = normalizeSubjectId(rawSubjId);
+      const matchedSubj = SUBJECT_BANK.find((s) => s.id === subjectId);
+      const finalSubjectName = subjectName || (matchedSubj ? matchedSubj.name : 'Mata Pelajaran');
+
+      const studentClass = String(extractRowField(rawItem, 'studentClass') || extractRowField(rawItem, 'kelas') || 'VI-A').trim();
+      const studentAbsen = String(extractRowField(rawItem, 'studentAbsen') || extractRowField(rawItem, 'absen') || '-').trim();
+      const timestamp = String(extractRowField(rawItem, 'timestamp') || extractRowField(rawItem, 'waktu') || '-').trim();
+      const school = String(extractRowField(rawItem, 'school') || 'Sekolah Dasar Negeri 17 Woja').trim();
+
+      const pgCorrectRaw = Number(extractRowField(rawItem, 'pgCorrect'));
+      const pgCorrect = !isNaN(pgCorrectRaw) ? pgCorrectRaw : 0;
+
+      const pgScoreRaw = Number(extractRowField(rawItem, 'pgScore'));
+      const pgScore = !isNaN(pgScoreRaw) ? Number(pgScoreRaw.toFixed(1)) : Number((pgCorrect * 2.5).toFixed(1));
+
+      const rawEssay = extractRowField(rawItem, 'essayScore');
+      const parsedEssayNum = rawEssay === '' || rawEssay === null || rawEssay === undefined || String(rawEssay).toLowerCase().includes('belum') || String(rawEssay).toLowerCase().includes('menunggu')
+        ? NaN
+        : Number(rawEssay);
+      const essayScore = !isNaN(parsedEssayNum) ? Number(parsedEssayNum.toFixed(1)) : null;
+
+      const rawTotal = Number(extractRowField(rawItem, 'totalScore'));
+      const totalScore = !isNaN(rawTotal)
+        ? Number(rawTotal.toFixed(1))
+        : Number((pgScore + (essayScore !== null ? essayScore : 0)).toFixed(1));
+
+      const rawId = String(extractRowField(rawItem, 'id') || '').trim();
+      const stableId = rawId || `SUB-${studentName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${studentClass}-${studentAbsen}-${subjectId}-${timestamp}`;
+
+      const status = essayScore !== null
+        ? 'Selesai Dinilai Guru'
+        : (String(extractRowField(rawItem, 'status') || 'Menunggu Peninjauan Isian Guru'));
+
+      return {
+        id: stableId,
+        timestamp,
+        school,
+        subjectId,
+        subjectName: finalSubjectName,
+        studentName: studentName || 'Peserta Ujian',
+        studentClass,
+        studentAbsen,
+        pgCorrect,
+        pgTotal: 30,
+        pgScore,
+        essayScore,
+        totalScore,
+        status,
+        essayAnswers: parseRemoteEssayAnswers(rawItem, subjectId)
+      };
+    }
+
+    async function syncSubmissionsWithGoogleSheet(manualTrigger = false) {
+      const url = (appSettings.googleSheetUrl || '').trim();
+      const statusBannerText = document.getElementById('gradingSyncStatusText');
+
+      if (!url) {
+        if (statusBannerText) {
+          statusBannerText.innerHTML = '⚠️ URL Web App Google Sheets belum diisi pada tab <strong>3. Pengaturan WhatsApp &amp; Google Sheets</strong>. Data saat ini hanya tersimpan di browser lokal.';
+        }
+        if (manualTrigger) {
+          showToast('Atur URL Google Apps Script terlebih dahulu di tab Pengaturan.', '⚠️');
+        }
+        return;
+      }
+
+      try {
+        if (manualTrigger) showToast('Menarik rekap & status koreksi siswa dari Google Sheets...', '🔄');
+        const sep = url.includes('?') ? '&' : '?';
+        const fetchUrl = `${url}${sep}action=get_submissions&_t=${Date.now()}`;
+        const response = await fetch(fetchUrl, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+        const remoteRows = Array.isArray(data)
+          ? data
+          : Array.isArray(data.submissions)
+            ? data.submissions
+            : Array.isArray(data.rekap)
+              ? data.rekap
+              : Array.isArray(data.data)
+                ? data.data
+                : [];
+
+        const remoteNormalized = remoteRows
+          .map(normalizeRemoteSubmission)
+          .filter(Boolean);
+
+        // Gabungkan data remote & lokal berdasarkan ID / kunci siswa+mapel+waktu
+        const mergedMap = new Map();
+        const makeKey = (item) =>
+          item.id && !item.id.startsWith('SUB-17')
+            ? item.id
+            : `${item.studentName.toLowerCase()}|${item.studentClass}|${item.studentAbsen}|${item.subjectId}|${item.timestamp}`;
+
+        // Masukkan data remote terlebih dahulu (sumber terpusat semua siswa)
+        remoteNormalized.forEach((rem) => {
+          mergedMap.set(makeKey(rem), rem);
+        });
+
+        // Sinkronkan juga item lokal yang belum ada atau yang baru saja dikoreksi di perangkat ini
+        for (const loc of allSubmissions) {
+          const key = makeKey(loc);
+          const existing = mergedMap.get(key);
+          if (!existing) {
+            mergedMap.set(key, loc);
+            // Dorong catatan lokal yang belum ada di server ke Google Sheets
+            postRecordToGoogleSheet(loc, { silent: true, action: 'upsert_submission' });
+          } else if (existing.essayScore === null && loc.essayScore !== null) {
+            mergedMap.set(key, {
+              ...existing,
+              essayScore: loc.essayScore,
+              totalScore: loc.totalScore,
+              status: 'Selesai Dinilai Guru'
+            });
+            postRecordToGoogleSheet(loc, { silent: true, action: 'update_grade' });
+          }
+        }
+
+        allSubmissions = Array.from(mergedMap.values());
+        localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(allSubmissions));
+        renderSubmissionsList();
+
+        const timeNow = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        if (statusBannerText) {
+          statusBannerText.innerHTML = `✅ Tersinkron dengan Google Sheets (${allSubmissions.length} data siswa • diperbarui pukul ${timeNow}).`;
+        }
+        if (manualTrigger) {
+          showToast(`Rekap berhasil disinkronkan (${allSubmissions.length} entri siswa).`, '✅');
+        }
+      } catch (err) {
+        console.warn('Sinkronisasi rekap ke Google Sheets gagal/belum mendukung GET rekap:', err);
+        if (statusBannerText) {
+          statusBannerText.innerHTML = '⚠️ Gagal menarik rekap otomatis dari Google Sheets. Pastikan Web App Google Apps Script mendukung parameter <code>?action=get_submissions</code>. Nilai yang Anda simpan tetap tersimpan lokal &amp; dikirim via POST.';
+        }
+        if (manualTrigger) {
+          showToast('Tidak dapat menarik rekap otomatis dari server. Menampilkan data lokal.', '⚠️');
+        }
+      }
+    }
+
+    function returnToStudentHome() {
+      switchView('studentHome');
+      renderSubjectCards();
+    }
+
+    // =========================================================================
+    // 9. NAVIGASI VIEW & PANEL GURU / ADMIN
+    // =========================================================================
+    function switchView(viewName) {
+      currentView = viewName;
+      ['viewStudentHome', 'viewExamRoom', 'viewExamResult', 'viewTeacherPanel'].forEach((id) => {
+        document.getElementById(id).classList.add('hidden');
+      });
+
+      const map = {
+        studentHome: 'viewStudentHome',
+        examRoom: 'viewExamRoom',
+        examResult: 'viewExamResult',
+        teacherPanel: 'viewTeacherPanel'
+      };
+      document.getElementById(map[viewName]).classList.remove('hidden');
+
+      const exitTeacherBtn = document.getElementById('btnExitTeacherMode');
+      if (exitTeacherBtn) {
+        if (viewName === 'teacherPanel') {
+          exitTeacherBtn.classList.remove('hidden');
+          exitTeacherBtn.classList.add('flex');
+        } else {
+          exitTeacherBtn.classList.add('hidden');
+          exitTeacherBtn.classList.remove('flex');
+        }
+      }
+    }
+
+    function switchToStudentView() {
+      switchView('studentHome');
+      renderSubjectCards();
+    }
+
+    function openTeacherPanel() {
+      switchView('teacherPanel');
+      updateSimModeButtonUI();
+      updateCentralSyncUI();
+      renderScheduleTable();
+      renderSubmissionsList();
+      syncSubmissionsWithGoogleSheet(false);
+      document.getElementById('cfgWhatsappNumber').value = appSettings.whatsappNumber || '';
+      document.getElementById('cfgGoogleSheetUrl').value = appSettings.googleSheetUrl || '';
+      document.getElementById('submissionCountBadge').textContent = allSubmissions.length;
+    }
+
+    function switchTeacherTab(tab) {
+      const tabs = {
+        schedule: ['teacherTabSchedule', 'tabBtnSchedule'],
+        grading: ['teacherTabGrading', 'tabBtnGrading'],
+        integration: ['teacherTabIntegration', 'tabBtnIntegration']
+      };
+      Object.entries(tabs).forEach(([key, [panelId, btnId]]) => {
+        const panel = document.getElementById(panelId);
+        const btn = document.getElementById(btnId);
+        if (key === tab) {
+          panel.classList.remove('hidden');
+          btn.className = 'px-4 py-2.5 rounded-xl bg-blue-700 text-white font-bold text-sm shadow-xs';
+        } else {
+          panel.classList.add('hidden');
+          btn.className = 'px-4 py-2.5 rounded-xl bg-white text-slate-700 border border-slate-200 font-bold text-sm hover:bg-slate-50';
+        }
+      });
+    }
+
+    function toggleSimulationMode() {
+      simulationMode = !simulationMode;
+      localStorage.setItem(STORAGE_KEYS.SIMULATION, String(simulationMode));
+      updateSimModeButtonUI();
+      updateScheduleStatusesInTable();
+      showToast(
+        simulationMode
+          ? 'Mode Simulasi AKTIF: Semua paket soal mapel langsung terbuka untuk diuji.'
+          : 'Mode Simulasi NONAKTIF: Jadwal otomatis kembali berlaku.',
+        simulationMode ? '🟢' : '🔒'
+      );
+    }
+
+    function updateSimModeButtonUI() {
+      const btn = document.getElementById('btnToggleSimMode');
+      if (simulationMode) {
+        btn.textContent = 'Mode Simulasi: AKTIF (Semua Terbuka)';
+        btn.className = 'px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-emerald-600 text-white border border-emerald-700 shadow-xs transition';
+      } else {
+        btn.textContent = 'Mode Simulasi: NONAKTIF';
+        btn.className = 'px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 transition';
+      }
+    }
+
+    // =========================================================================
+    // 10. PENGATURAN JADWAL PER MAPEL DI PANEL GURU
+    // =========================================================================
+    function renderScheduleTable() {
+      const tbody = document.getElementById('scheduleTableBody');
+      tbody.innerHTML = SUBJECT_BANK.map((subj) => {
+        const effective = getEffectiveSchedule(subj.id);
+        const status = getScheduleStatus(subj.id);
+        const sourceTag = effective.source === 'central'
+          ? '<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[11px] font-bold">Google Sheets</span>'
+          : '<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-semibold">Cadangan Lokal</span>';
+
+        return `
+          <tr>
+            <td class="p-3 font-bold text-slate-900">
+              <div>${subj.name}</div>
+              <div class="text-xs font-normal text-slate-500">${subj.code}</div>
+            </td>
+            <td class="p-3">
+              <input id="schedStart_${subj.id}" type="datetime-local" value="${effective.start}" class="px-2.5 py-2 rounded-lg border border-slate-300 text-xs font-medium" />
+            </td>
+            <td class="p-3">
+              <input id="schedEnd_${subj.id}" type="datetime-local" value="${effective.end}" class="px-2.5 py-2 rounded-lg border border-slate-300 text-xs font-medium" />
+            </td>
+            <td class="p-3">
+              <input id="schedDur_${subj.id}" type="number" min="10" max="180" value="${effective.durationMinutes || 60}" class="w-20 px-2.5 py-2 rounded-lg border border-slate-300 text-xs font-bold text-center" />
+            </td>
+            <td class="p-3">${sourceTag}</td>
+            <td class="p-3" id="schedStatusCell_${subj.id}">
+              <span class="inline-block px-2.5 py-1 rounded-full text-xs font-bold ${
+                status.state === 'ACTIVE'
+                  ? 'bg-emerald-100 text-emerald-800'
+                  : status.state === 'UPCOMING'
+                    ? 'bg-amber-100 text-amber-800'
+                    : 'bg-rose-100 text-rose-800'
+              }">
+                ${status.label}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function updateScheduleStatusesInTable() {
+      SUBJECT_BANK.forEach((subj) => {
+        const cell = document.getElementById(`schedStatusCell_${subj.id}`);
+        if (!cell) return;
+        const status = getScheduleStatus(subj.id);
+        cell.innerHTML = `
+          <span class="inline-block px-2.5 py-1 rounded-full text-xs font-bold ${
+            status.state === 'ACTIVE'
+              ? 'bg-emerald-100 text-emerald-800'
+              : status.state === 'UPCOMING'
+                ? 'bg-amber-100 text-amber-800'
+                : 'bg-rose-100 text-rose-800'
+          }">
+            ${status.label}
+          </span>
+        `;
+      });
+    }
+
+    function saveScheduleSettings() {
+      SUBJECT_BANK.forEach((subj) => {
+        const start = document.getElementById(`schedStart_${subj.id}`).value;
+        const end = document.getElementById(`schedEnd_${subj.id}`).value;
+        const dur = parseInt(document.getElementById(`schedDur_${subj.id}`).value, 10) || 60;
+        subjectSchedules[subj.id] = { start, end, durationMinutes: dur };
+      });
+      localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(subjectSchedules));
+      updateScheduleStatusesInTable();
+      showToast('Jadwal cadangan lokal berhasil disimpan!', '✅');
+    }
+
+    function setAllSchedulesTodayDemo() {
+      const now = new Date();
+      const start = new Date(now.getTime() - 15 * 60000);
+      const end = new Date(now.getTime() + 4 * 3600000);
+      SUBJECT_BANK.forEach((subj) => {
+        subjectSchedules[subj.id] = {
+          start: toLocalDatetimeInputValue(start),
+          end: toLocalDatetimeInputValue(end),
+          durationMinutes: 60
+        };
+      });
+      localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(subjectSchedules));
+      renderScheduleTable();
+      showToast('Semua jadwal cadangan lokal diatur aktif mulai sekarang hingga 4 jam ke depan.', '🗓️');
+    }
+
+    // =========================================================================
+    // 11. PENINJAUAN MANUAL SOAL ISIAN & REKAP NILAI DI PANEL GURU
+    // =========================================================================
+    function renderSubmissionsList() {
+      const container = document.getElementById('submissionsListContainer');
+      document.getElementById('submissionCountBadge').textContent = allSubmissions.length;
+
+      const filterSelect = document.getElementById('filterGradingSubject');
+      const selectedFilter = filterSelect ? filterSelect.value : 'ALL';
+
+      const filteredEntries = allSubmissions
+        .map((sub, idx) => ({ sub, idx }))
+        .filter(({ sub }) => {
+          if (!selectedFilter || selectedFilter === 'ALL') return true;
+          const sid = sub.subjectId || normalizeSubjectId(sub.subjectName);
+          return sid === selectedFilter;
+        });
+
+      if (allSubmissions.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center rounded-xl bg-slate-50 border border-dashed border-slate-300 text-slate-500 text-sm">
+            Belum ada data ujian siswa. Klik <strong>Sinkronkan Rekap &amp; Koreksi</strong> untuk menarik data semua siswa dari Google Sheets.
+          </div>
+        `;
+        return;
+      }
+
+      if (filteredEntries.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center rounded-xl bg-slate-50 border border-dashed border-slate-300 text-slate-500 text-sm">
+            Tidak ada data ujian siswa untuk mata pelajaran yang dipilih.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filteredEntries.map(({ sub, idx }) => {
+        const isGraded = sub.essayScore !== null && sub.essayScore !== undefined;
+        return `
+          <div class="rounded-2xl border border-slate-200 p-4 sm:p-5 bg-slate-50/60 space-y-4">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-blue-100 text-blue-800 text-xs font-bold">${sub.subjectName}</span>
+                  <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                    isGraded ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'
+                  }">
+                    ${isGraded ? 'Sudah Dinilai Guru' : 'Menunggu Peninjauan Isian'}
+                  </span>
+                </div>
+                <h4 class="text-base font-extrabold text-slate-900 mt-1.5">
+                  ${escapeHtml(sub.studentName)} <span class="text-slate-500 font-semibold text-sm">(${sub.studentClass} • Absen ${escapeHtml(sub.studentAbsen)})</span>
+                </h4>
+                <p class="text-xs text-slate-500">Selesai: ${sub.timestamp}</p>
+              </div>
+
+              <div class="flex items-center gap-3 bg-white px-4 py-2.5 rounded-xl border border-slate-200">
+                <div class="text-center">
+                  <div class="text-[10px] font-bold uppercase text-slate-500">PG/BS (75)</div>
+                  <div class="text-sm font-extrabold text-blue-800">${sub.pgScore}</div>
+                </div>
+                <div class="h-6 w-px bg-slate-200"></div>
+                <div class="text-center">
+                  <div class="text-[10px] font-bold uppercase text-slate-500">Isian (25)</div>
+                  <div class="text-sm font-extrabold text-amber-700">${isGraded ? sub.essayScore : '-'}</div>
+                </div>
+                <div class="h-6 w-px bg-slate-200"></div>
+                <div class="text-center">
+                  <div class="text-[10px] font-bold uppercase text-slate-500">Nilai Akhir</div>
+                  <div class="text-base font-extrabold text-emerald-700">${sub.totalScore}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+              ${sub.essayAnswers.map((ans, aIdx) => `
+                <div class="p-3 rounded-xl bg-white border border-slate-200 text-xs space-y-1">
+                  <div class="font-bold text-slate-700">${aIdx + 1}. ${ans.question}</div>
+                  <div class="text-blue-900 font-semibold">Jawaban Siswa: <span class="bg-blue-50 px-1.5 py-0.5 rounded">${escapeHtml(ans.studentAnswer)}</span></div>
+                  <div class="text-emerald-700">Acuan Kunci: <strong>${ans.hint}</strong></div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <label class="text-xs font-bold text-slate-700">Input Skor Total 5 Isian (0–25):</label>
+                <input
+                  id="manualEssayInput_${idx}"
+                  type="number"
+                  min="0"
+                  max="25"
+                  step="0.5"
+                  value="${isGraded ? sub.essayScore : ''}"
+                  placeholder="0-25"
+                  class="w-24 px-3 py-2 rounded-lg border border-slate-300 text-sm font-bold text-center bg-white"
+                />
+                <button onclick="saveManualEssayScore(${idx})" class="px-3.5 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs transition">
+                  Simpan Nilai
+                </button>
+              </div>
+
+              <div class="flex flex-wrap gap-2">
+                <button onclick="sendSubmissionItemToWA(${idx})" class="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition">
+                  📲 Kirim WA
+                </button>
+                <button onclick="sendSubmissionItemToSheet(${idx})" class="px-3 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs transition">
+                  📊 Kirim Sheets
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function saveManualEssayScore(idx) {
+      const inputEl = document.getElementById(`manualEssayInput_${idx}`);
+      const val = parseFloat(inputEl.value);
+      if (isNaN(val) || val < 0 || val > 25) {
+        showToast('Masukkan skor isian antara 0 hingga 25.', '⚠️');
+        return;
+      }
+      const sub = allSubmissions[idx];
+      sub.essayScore = Number(val.toFixed(1));
+      sub.totalScore = Number((sub.pgScore + sub.essayScore).toFixed(1));
+      sub.status = 'Selesai Dinilai Guru';
+
+      localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(allSubmissions));
+      renderSubmissionsList();
+      postRecordToGoogleSheet(sub, { silent: true, action: 'update_grade' });
+      showToast(`Nilai akhir ${sub.studentName} diperbarui menjadi ${sub.totalScore} dan disinkronkan.`, '✅');
+    }
+
+    function sendSubmissionItemToWA(idx) {
+      sendRecordToWhatsApp(allSubmissions[idx]);
+    }
+
+    function sendSubmissionItemToSheet(idx) {
+      postRecordToGoogleSheet(allSubmissions[idx]);
+    }
+
+    function exportSubmissionsCSV() {
+      if (allSubmissions.length === 0) {
+        showToast('Belum ada data nilai untuk diekspor.', '⚠️');
+        return;
+      }
+      const headers = ['Waktu', 'Sekolah', 'Nama Siswa', 'Kelas', 'No Absen', 'Mata Pelajaran', 'Benar PG', 'Skor PG', 'Skor Isian', 'Nilai Akhir', 'Status'];
+      const rows = allSubmissions.map((s) => [
+        s.timestamp, s.school, s.studentName, s.studentClass, s.studentAbsen,
+        s.subjectName, s.pgCorrect, s.pgScore,
+        s.essayScore !== null ? s.essayScore : 'Belum Dinilai',
+        s.totalScore, s.status
+      ].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','));
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', 'Rekap_Nilai_CBT_SDN17Woja.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('File CSV rekap nilai berhasil diunduh.', '📥');
+    }
+
+    function confirmClearSubmissions() {
+      openConfirmModal({
+        title: 'Hapus Semua Riwayat Nilai Lokal?',
+        body: 'Semua riwayat hasil ujian siswa yang tersimpan di browser perangkat ini akan dihapus permanen.',
+        confirmText: 'Ya, Hapus Semua',
+        onConfirm: () => {
+          allSubmissions = [];
+          localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(allSubmissions));
+          renderSubmissionsList();
+          showToast('Riwayat nilai lokal berhasil dikosongkan.', '🗑️');
+        }
+      });
+    }
+
+    function saveIntegrationSettings() {
+      appSettings.whatsappNumber = document.getElementById('cfgWhatsappNumber').value.trim();
+      appSettings.googleSheetUrl = document.getElementById('cfgGoogleSheetUrl').value.trim();
+      localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(appSettings));
+      showToast('Pengaturan WhatsApp & Google Sheets berhasil disimpan!', '✅');
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // =========================================================================
+    // 12. INISIALISASI SAAT HALAMAN DIMUAT
+    // =========================================================================
+    window.onload = function () {
+      const footerTrigger = document.getElementById('footerSecretTrigger');
+      if (footerTrigger) {
+        footerTrigger.addEventListener('click', () => {
+          secretTapCount += 1;
+          clearTimeout(secretTapTimer);
+          if (secretTapCount >= 5) {
+            secretTapCount = 0;
+            triggerHiddenTeacherAccess();
+          } else {
+            secretTapTimer = setTimeout(() => {
+              secretTapCount = 0;
+            }, 2500);
+          }
+        });
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key && e.key.toLowerCase() === 'g') {
+          e.preventDefault();
+          triggerHiddenTeacherAccess();
+        }
+      });
+
+      updateClockAndCards();
+      setInterval(updateClockAndCards, 1000);
+
+      // Tarik jadwal terpusat segera saat halaman dimuat dan perbarui berkala tiap 60 detik
+      fetchCentralSchedules(false);
+      setInterval(() => {
+        if (currentView === 'studentHome' || currentView === 'teacherPanel') {
+          fetchCentralSchedules(false);
+        }
+      }, 60000);
+    };
+  </script>
+</body>
+</html>
